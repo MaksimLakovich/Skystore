@@ -32,12 +32,12 @@ def contacts_page(request):
 
 
 def product_detail(request, pk):
-    """Контроллер для отображения страницы с подробной информацией о продукте (product_info.html).
+    """Контроллер для отображения страницы с подробной информацией о продукте (product.html).
     :param request: Экземпляр класса HttpRequest, который содержит всю информацию о запросе.
     :param pk: ID продукта в БД для получения данных с помощью ORM-запроса."""
     # ВАРИАНТ 1: product_data = Product.objects.get(id=pk)
     # ВАРИАНТ 2: вместо get() можно использовать get_object_or_404(), эта функция или найдет экземпляр по ID в БД,
     # или выведет пользователю ошибку 404, а не системную информацию с ошибкой в коде (это хорошая практика).
-    product_data = get_object_or_404(Product, id=pk)
+    product_data = get_object_or_404(Product, pk=pk)
     context = {"product": product_data}
-    return render(request, "catalog/product_info.html", context)
+    return render(request, "catalog/product.html", context)
