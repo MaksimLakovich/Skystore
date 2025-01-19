@@ -12,7 +12,14 @@
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <style>
         .text-muted-secondary {
-            opacity: 0.6;
+            opacity: 0.6; /* Сделать текст прозрачней до 60% */
+            }
+        .text-color {
+            color: #16c4ff; /* Значение бирюзового цвета для текста соответствующее цвету картинки */
+            }
+        .product-image-home-page {
+            width: 20%; /* Уменьшить масштаб изображения от его исходного размера */
+            height: auto; /* Сохранить пропорции изображения */
             }
     </style>
 </head>
@@ -32,7 +39,7 @@
     <div class="row align-items-center mb-5">
         <!-- Название продукта -->
         <div class="col-md-10 text-center">
-            <h1 class="display-4 text-primary">{{ product.product_name }}</h1>
+            <h1 class="display-4 text-color">{{ product.product_name }}</h1>
         </div>
         <!-- Изображение продукта -->
         <div class="col-md-2 text-center">
