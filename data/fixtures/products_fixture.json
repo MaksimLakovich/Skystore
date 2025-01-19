@@ -4,8 +4,8 @@
     "pk": 1,
     "fields": {
         "product_name": "Удобный сервис рассылок",
-        "description": "Неограниченная лицензия. Поддержка. Установка на сервер. Получение обновлений.",
-        "image": "static/product_image/images/mailing_service_icon.png",
+        "description": "Программное решение для автоматизации email-рассылок. Включает неограниченную лицензию, интеграцию с почтовыми сервисами и возможность настройки на собственном сервере. Техническая поддержка и регулярные обновления входят в пакет.",
+        "image": "media/product_image/mail_icon.png",
         "category": 1,
         "price": 140,
         "created_at": "2025-01-09 12:00:00",
@@ -17,8 +17,8 @@
     "pk": 2,
     "fields": {
         "product_name": "Модуль интеграции с Telegram",
-        "description": "Скрипт Python для отправки сообщений в Telegram с настройкой webhook'ов.",
-        "image": "static/product_image/images/telegram_module_icon.png",
+        "description": "Готовый скрипт для настройки интеграции с Telegram API. Подходит для отправки сообщений, создания ботов и настройки webhook-уведомлений. Прост в использовании и легко адаптируется под нужды проекта.",
+        "image": "media/product_image/message_icon.png",
         "category": 2,
         "price": 70,
         "created_at": "2025-01-09 12:00:00",
@@ -30,8 +30,8 @@
     "pk": 3,
     "fields": {
         "product_name": "Генератор HTML-отчетов",
-        "description": "Инструмент для создания удобных и адаптивных отчетов в HTML с использованием Python.",
-        "image": "static/product_image/images/html_report_icon.png",
+        "description": "Инструмент для создания динамических HTML-отчетов. Поддерживает адаптивный дизайн, графики и таблицы. Идеально подходит для автоматизации отчетности и визуализации данных.",
+        "image": "media/product_image/report_icon.png",
         "category": 2,
         "price": 65.5,
         "created_at": "2025-01-09 12:00:00",
@@ -43,8 +43,8 @@
     "pk": 4,
     "fields": {
         "product_name": "Библиотека для работы с API",
-        "description": "Легковесная библиотека Python для взаимодействия с REST API, включая поддержку OAuth.",
-        "image": "static/product_image/images/api_library_icon.png",
+        "description": "Легковесная библиотека Python для работы с REST API. Включает удобные методы для запросов, поддержку OAuth и обработку ответов. Подходит для интеграции с внешними сервисами.",
+        "image": "media/product_image/api_icon.png",
         "category": 2,
         "price": 90,
         "created_at": "2025-01-09 12:00:00",

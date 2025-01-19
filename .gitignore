@@ -165,5 +165,5 @@ cython_debug/
 
 pytest.ini
 
-static/product_image
+media/product_image
 static/fonts

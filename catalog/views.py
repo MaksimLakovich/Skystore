@@ -14,8 +14,9 @@ def home_page(request):
     # Вывод в консоль данных для отладки
     for product in latest_products:
         print(f"Название: {product.product_name}, Дата создания: {product.created_at}")
-
-    return render(request, "catalog/home.html")
+    # Создание контекста:
+    products = Product.objects.all()
+    return render(request, "catalog/home.html", {"products": products})
 
 
 def contacts_page(request):
