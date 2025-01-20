@@ -1,5 +1,5 @@
 {% extends 'catalog/base.html' %}
-{% block title%}Skystore: Контактная информация{% endblock %}
+{% block title %}Skystore: Контактная информация{% endblock %}
 
 {% block content %}
 <!--Блок с базовым описанием сути страницы-->
@@ -16,16 +16,16 @@
                 <div class="card-body">
                     <table class="table table-striped">
                         <tr>
-                            <td class="w-25">Страна</td>
-                            <td>{{ contact.country }}</td>
+                            <td class="w-25"><strong>Страна:</strong></td>
+                            <td>{{ contacts_data.country }}</td>
                         </tr>
                         <tr>
-                            <td class="w-25">ИНН</td>
-                            <td>{{ contact.tax_id }}</td>
+                            <td class="w-25"><strong>ИНН:</strong></td>
+                            <td>{{ contacts_data.tax_id }}</td>
                         </tr>
                         <tr>
-                            <td class="w-25">Адрес</td>
-                            <td>{{ contact.address }}</td>
+                            <td class="w-25"><strong>Адрес:</strong></td>
+                            <td>{{ contacts_data.address }}</td>
                         </tr>
                     </table>
                 </div>
@@ -41,16 +41,16 @@
                     <form method="post" action="" class="form-floating">
                         {% csrf_token %}
                         <div class="mb-3">
-                            <label for="name">Имя</label>
-                            <input type="text" name="name" class="form-control" id="name" placeholder="Ваше имя" required>
+                            <label for="name"><strong>Имя:</strong></label>
+                            <input type="text" name="name" class="form-control text-muted-secondary" id="name" placeholder="Ваше имя" required>
                         </div>
                         <div class="mb-3">
-                            <label for="phone">Телефон</label>
-                            <input type="text" name="phone" class="form-control" id="phone" placeholder="Контактный телефон" required>
+                            <label for="phone"><strong>Телефон:</strong></label>
+                            <input type="text" name="phone" class="form-control text-muted-secondary" id="phone" placeholder="Контактный телефон" required>
                         </div>
                         <div class="mb-3">
-                            <label for="message">Сообщение</label>
-                            <textarea type="text" name="message" class="form-control" id="message" placeholder="Контактный телефон" required></textarea>
+                            <label for="message"><strong>Сообщение:</strong></label>
+                            <textarea type="text" name="message" class="form-control text-muted-secondary" id="message" placeholder="Напишите ваше сообщение" required></textarea>
                         </div>
                         <button type="submit" class="btn btn-lg btn-block btn-outline-primary">Отправить</button>
                     </form>

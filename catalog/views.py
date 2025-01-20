@@ -37,7 +37,7 @@ def contacts_page(request):
         return HttpResponse(f"Спасибо, {name}! Ваше сообщение успешно отправлено")
     # Если метод запроса — GET, контроллер рендерит шаблон contacts.html
     # Сразу получаю контактные данные из БД, чтоб потом их использовать при рендере шаблона страницы-html
-    contacts_data = ContactsData.objects.all()
+    contacts_data = ContactsData.objects.get(id=1)
     return render(request, "catalog/contacts.html", {"contacts_data": contacts_data})
 
 
@@ -51,3 +51,14 @@ def product_detail(request, pk):
     product_data = get_object_or_404(Product, pk=pk)
     context = {"product": product_data}
     return render(request, "catalog/product.html", context)
+
+
+def add_product_page(request):
+    """Контроллер для отображения страницы с формой, которая позволяет пользователю добавлять новые товары в БД.
+    :param request: Экземпляр класса HttpRequest, который содержит всю информацию о запросе."""
+    if request.method == "POST":
+        name = request.POST.get("name")
+        # Если метод запроса POST, контроллер получает данные из формы (name) и возвращает простой HTTP-ответ.
+        return HttpResponse(f"Данные Вашего продукта успешно добавлены в магазин. Спасибо!")
+    # Если метод запроса — GET, контроллер рендерит шаблон contacts.html
+    return render(request, "catalog/add_your_product.html")
