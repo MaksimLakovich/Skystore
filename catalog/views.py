@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 
@@ -5,17 +6,25 @@ from catalog.models import ContactsData, Product
 
 
 def home_page(request):
-    """Контроллер для отображения домашней страницы (home.html).
+    """Контроллер для отображения домашней страницы (home.html) с пагинацией.
     Для отладки контроллер главной/домашней страницы выводит в консоль последние 5 созданных продуктов.
     :param request: Экземпляр класса HttpRequest, который содержит всю информацию о запросе."""
     # Выборка последних 5 продуктов. Символ '-' перед 'created_at' устанавливает порядок от новых к старым.
     # Если не использовать символ '-' перед 'created_at', то порядок будет наоборот от старых к новым.
     latest_products = Product.objects.order_by("-created_at")[:5]
-    # Вывод в консоль данных для отладки
+    # Вывод в консоль данных для отладки:
     for product in latest_products:
         print(f"Название: {product.product_name}, Дата создания: {product.created_at}")
     # Создание контекста:
     products = Product.objects.all()
+    # Указываю сколько товаров будет отображаться на одной странице:
+    items_per_page = 6
+    # Создаю пагинатор:
+    paginator = Paginator(products, items_per_page)
+    # Получаю номер текущей страницы из GET-запроса (по умолчанию страница 1):
+    page_number = request.GET.get("page", 1)
+    # Получаю продукты для текущей страницы:
+    products = paginator.get_page(page_number)
     return render(request, "catalog/home.html", {"products": products})
 
 
