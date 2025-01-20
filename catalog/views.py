@@ -2,6 +2,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 
+from catalog.forms import ProductForm
 from catalog.models import ContactsData, Product
 
 
@@ -57,8 +58,11 @@ def add_product_page(request):
     """Контроллер для отображения страницы с формой, которая позволяет пользователю добавлять новые товары в БД.
     :param request: Экземпляр класса HttpRequest, который содержит всю информацию о запросе."""
     if request.method == "POST":
-        name = request.POST.get("name")
-        # Если метод запроса POST, контроллер получает данные из формы (name) и возвращает простой HTTP-ответ.
-        return HttpResponse(f"Данные Вашего продукта успешно добавлены в магазин. Спасибо!")
-    # Если метод запроса — GET, контроллер рендерит шаблон contacts.html
-    return render(request, "catalog/add_your_product.html")
+        # Вызываю форму для добавления пользователем нового товара (форма создана в forms.py)
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return HttpResponse("Данные Вашего продукта успешно добавлены в магазин. Спасибо!")
+    else:
+        form = ProductForm()
+    return render(request, "catalog/add_your_product.html", {"form": form})
