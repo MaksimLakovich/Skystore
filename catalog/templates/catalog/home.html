@@ -1,43 +1,15 @@
-{% load static %}
+{% extends 'catalog/base.html' %}
+
 {% load my_tags %}
 
-<!doctype html>
-<html lang="ru">
+{% block title %}Skystore: Главная страница{% endblock %}
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Skystore</title>
-    <!-- Подключение статичеcких файлов со стилями Bootstrap -->
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <style>
-        .text-muted-secondary {
-            opacity: 0.6; /* Сделать текст прозрачней до 60% */
-            }
-        .text-color {
-            color: #16c4ff; /* Значение бирюзового цвета для текста соответствующее цвету картинки */
-            }
-        .product-image-home-page {
-            width: 20%; /* Уменьшить масштаб изображения от его исходного размера */
-            height: auto; /* Сохранить пропорции изображения */
-            }
-    </style>
-</head>
-
-<body>
-<!--Верхняя часть с навигацией-->
-<div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-5 bg-white border-bottom box-shadow">
-    <h5 class="my-0 mr-md-auto font-weight-normal">Skystore</h5>
-    <nav class="ms-5">
-        <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:home_page' %}">Каталог</a>
-        <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:contacts_page' %}">Контакты</a>
-    </nav>
-</div>
-
+{% block content %}
 <!--Блок с базовым описанием сути страницы-->
 <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
     <h1 class="display-4">Skystore</h1>
-    <p class="lead">Skystore - это отличный вариант хранения ваших плагинов и примеров кода, который вы бы хотели продать</p>
+    <p class="lead">Skystore - это отличный вариант хранения ваших плагинов и примеров кода, который вы бы хотели
+        продать</p>
 </div>
 
 <!--Блок с карточками продуктов-->
@@ -46,9 +18,12 @@
         <!--Карточки с продуктами, которые мы получаем на страницу выполняя цикл FOR-->
         {% for product in products %}
         <div class="col-4">
-            <div class="card mb-4 box-shadow shadow">
+            <!-- Карточка -->
+            <div class="card mb-4 box-shadow shadow card-hover">
                 <div class="card-header">
-                    <h4 class="my-0 font-weight-normal mt-4 mb-3">{{ product.product_name }}</h4>
+                    <div>
+                        <h4 class="my-0 font-weight-normal mt-4 mb-3 product-title-home-page">{{ product.product_name }}</h4>
+                    </div>
                     <img src="{{ product.image | media_filter}}" alt="Изображение продукта" class="product-image-home-page mb-2">
                 </div>
                 <div class="card-body">
@@ -66,41 +41,5 @@
         </div>
         {% endfor %}
     </div>
-
-<!--Нижняя часть с футером-->
-    <footer class="pt-4 my-md-5 pt-md-5 border-top">
-        <div class="row">
-            <div class="col-12 col-md">
-                SkyStore
-                <small class="d-block mb-3 text-muted">&copy; 2023</small>
-            </div>
-            <div class="col-6 col-md">
-                <h5>Категории</h5>
-                <ul class="list-unstyled text-small">
-                    <li><a class="text-muted" href="#">Рассылки</a></li>
-                    <li><a class="text-muted" href="#">Телеграм боты</a></li>
-                    <li><a class="text-muted" href="#">Полезные утилиты</a></li>
-                    <li><a class="text-muted" href="#">Веб-приложения</a></li>
-                    <li><a class="text-muted" href="#">Микросервисы</a></li>
-                </ul>
-            </div>
-            <div class="col-6 col-md">
-                <h5>Дополнительно</h5>
-                <ul class="list-unstyled text-small">
-                    <li><a class="text-muted" href="#">Мы пишем</a></li>
-                </ul>
-            </div>
-            <div class="col-6 col-md">
-                <h5>О нас</h5>
-                <ul class="list-unstyled text-small">
-                    <li><a class="text-muted" href="{% url 'catalog:contacts_page' %}">Контакты</a></li>
-                </ul>
-            </div>
-        </div>
-    </footer>
 </div>
-
-<!-- Подключение статичеcких файлов со скриптами Bootstrap -->
-<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-</body>
-</html>
+{% endblock %}
