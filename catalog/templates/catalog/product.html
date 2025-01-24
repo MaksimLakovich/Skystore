@@ -1,0 +1,31 @@
+{% extends 'catalog/base.html' %}
+{% load my_tags %}
+{% block title %}Skystore: {{ product.product_name }}{% endblock %}
+
+{% block content %}
+<!-- Основной блок с информацией о продукте -->
+<div class="container">
+    <div class="row align-items-center mb-5">
+        <!-- Название продукта -->
+        <div class="col-md-10 text-center">
+            <h1 class="display-4 text-color product-title-product-page">{{ product.product_name }}</h1>
+        </div>
+        <!-- Изображение продукта -->
+        <div class="col-md-2 text-center">
+            <img src="{{ product.image | media_filter}}" alt="Изображение продукта" class="product-image">
+        </div>
+    </div>
+    <!-- Параметры продукта -->
+    <div class="product-parameters mb-5">
+        <p class="mb-4"><strong>ОПИСАНИЕ: </strong>{{ product.description }}</p>
+        <p class="mb-4"><strong>КАТЕГОРИЯ: </strong>{{ product.category }}</p>
+        <p class="mb-4"><strong>ЦЕНА: </strong>$ {{ product.price }}</p>
+        <small class="text-muted-secondary">Дата последнего обновления продукта: {{ product.updated_at | date:"d M Y" }}</small>
+    </div>
+    <!-- Кнопки -->
+    <div class="text-center">
+        <a href="#" class="btn btn-lg btn-primary me-3">Купить</a>
+        <a href="{% url 'catalog:home_page' %}" class="btn btn-lg btn-outline-primary">Назад</a>
+    </div>
+</div>
+{% endblock %}

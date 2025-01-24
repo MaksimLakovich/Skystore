@@ -164,6 +164,3 @@ cython_debug/
 .DS_Store
 
 pytest.ini
-
-static/product_image
-static/fonts
