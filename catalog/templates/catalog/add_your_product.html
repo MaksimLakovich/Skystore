@@ -7,7 +7,42 @@
     <h1 class="display-4 mb-5">Добавьте свой продукт в каталог Skystore</h1>
 </div>
 
-<!--Блок с вводом данных о продукте-->
+<!--&lt;!&ndash;ВАРИАНТ 1: использование FBV (function-based view):&ndash;&gt;-->
+<!--<div class="container">-->
+<!--    <div class="row text-start">-->
+<!--        <div class="col-lg-12 col-md-12 col-sm-12">-->
+<!--            <div class="card-body">-->
+<!--                &lt;!&ndash; Отображение формы ProductForm(forms.ModelForm) для добавления пользователем нового товара&ndash;&gt;-->
+<!--                <form method="post" enctype="multipart/form-data" class="form-floating">-->
+<!--                    {% csrf_token %}-->
+<!--                    <div class="form-group mb-4">-->
+<!--                        <label for="product_name"><strong>{{ form.product_name.label }}</strong></label>-->
+<!--                        {{ form.product_name }}-->
+<!--                    </div>-->
+<!--                    <div class="form-group mb-4">-->
+<!--                        <label for="description"><strong>{{ form.description.label }}</strong></label>-->
+<!--                        {{ form.description }}-->
+<!--                    </div>-->
+<!--                    <div class="form-group mb-4">-->
+<!--                        <label for="price"><strong>{{ form.price.label }}</strong></label>-->
+<!--                        {{ form.price }}-->
+<!--                    </div>-->
+<!--                    <div class="form-group mb-4">-->
+<!--                        <label for="image"><strong>{{ form.image.label }}</strong></label>-->
+<!--                        {{ form.image }}-->
+<!--                    </div>-->
+<!--                    <div class="form-group mb-4">-->
+<!--                        <label for="category"><strong>{{ form.category.label }}</strong></label>-->
+<!--                        {{ form.category }}-->
+<!--                    </div>-->
+<!--                    <button type="submit" class="btn btn-lg btn-outline-primary mt-4">Отправить</button>-->
+<!--                </form>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
+<!--ВАРИАНТ 2: использование CBV (class-based view):-->
 <div class="container">
     <div class="row text-start">
         <div class="col-lg-12 col-md-12 col-sm-12">
@@ -17,23 +52,33 @@
                     {% csrf_token %}
                     <div class="form-group mb-4">
                         <label for="product_name"><strong>{{ form.product_name.label }}</strong></label>
-                        {{ form.product_name }}
+                        <div>
+                            {{ form.product_name }}
+                        </div>
                     </div>
                     <div class="form-group mb-4">
                         <label for="description"><strong>{{ form.description.label }}</strong></label>
-                        {{ form.description }}
+                        <div>
+                            {{ form.description }}
+                        </div>
                     </div>
                     <div class="form-group mb-4">
                         <label for="price"><strong>{{ form.price.label }}</strong></label>
-                        {{ form.price }}
+                        <div>
+                            {{ form.price }}
+                        </div>
                     </div>
                     <div class="form-group mb-4">
                         <label for="image"><strong>{{ form.image.label }}</strong></label>
-                        {{ form.image }}
+                        <div>
+                            {{ form.image }}
+                        </div>
                     </div>
                     <div class="form-group mb-4">
                         <label for="category"><strong>{{ form.category.label }}</strong></label>
-                        {{ form.category }}
+                        <div>
+                            {{ form.category }}
+                        </div>
                     </div>
                     <button type="submit" class="btn btn-lg btn-outline-primary mt-4">Отправить</button>
                 </form>
@@ -41,4 +86,5 @@
         </div>
     </div>
 </div>
+
 {% endblock %}
