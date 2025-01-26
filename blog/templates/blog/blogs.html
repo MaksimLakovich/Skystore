@@ -1,0 +1,56 @@
+{% extends 'catalog/base.html' %}
+{% load my_tags %}
+{% block title %}Skystore: Блог{% endblock %}
+
+{% block content %}
+<!--Блок с базовым описанием сути страницы-->
+<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1 class="display-4">Блог</h1>
+    <p class="lead">Читайте наши полезные статьи, чтобы узнать больше о разработке и плагинах!</p>
+</div>
+<!--Блок с кнопкой добавления статьи-->
+<div>
+    <a class="p-2 btn btn-outline-primary" href="{% url 'blog:add_your_article_page' %}">Добавить новую статью</a>
+</div>
+
+<!-- Список статей блога -->
+<div class="container mt-5">
+    <div class="row">
+        {% for article in articles %}
+        <!-- Горизонтальная карточка статьи -->
+        <div class="col-12 mb-4">
+            <div class="card border-1 d-flex flex-row mb-2 shadow card-hover">
+                <!-- Текстовая часть статьи-->
+                <div class="card-body" style="flex: 1;">
+                    <div>
+                        <h3 class="card-title">{{ article.article_title }}</h3>
+                        <p class="text-muted mb-3 d-flex align-items-center" style="opacity: 0.4;">
+                            <span>{{ article.create_at|date:"d M Y" }}</span>
+                            <span class="ms-3 d-flex align-items-center">
+                                <!-- Иконка глаза и отображение счетчика просмотров-->
+                                <i class="fas fa-eye me-1"></i>
+                                <span>{{ article.views_counter }}</span>
+                            </span>
+                        </p>
+                        <p class="card-text text-muted mb-2">
+                            {{ article.article_contents | truncatechars:200 }}
+                        </p>
+                    </div>
+                    <div>
+                        <a href="{% url 'blog:article_detail_page' article.pk%}" class="btn btn-link text-primary p-0">Продолжить чтение →</a>
+                    </div>
+                </div>
+                <!-- Превью статьи (картинка) -->
+                <div class="col-md-4 bg-dark d-flex align-items-center justify-content-center"
+                     style="max-width: 250px; background-image: url('{{ article.image | media_filter }}'); background-size: cover; background-position: center;">
+<!--                    <span class="text-white text-center">{{ article.article_title }}</span>-->
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Подключение подшаблона с пагинацией (нижняя часть переключения страниц) -->
+{% include 'catalog/paginator.html' %}
+{% endblock %}

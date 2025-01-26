@@ -44,7 +44,11 @@
                             {{ form.category }}
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-lg btn-outline-primary mt-4">Отправить</button>
+                    <!-- Кнопки -->
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-lg btn-outline-danger mt-4">Отправить</button>
+                    </div>
+                    <a href="{% url 'catalog:home_page' %}" class="btn btn-lg btn-primary">Назад</a>
                 </form>
             </div>
         </div>
