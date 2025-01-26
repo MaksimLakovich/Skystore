@@ -53,3 +53,20 @@ class ContactsData(models.Model):
         verbose_name_plural = "Контакты"
         ordering = ["country"]
         db_table = "catalog_contacts_data"
+
+
+class Feedback(models.Model):
+    """Модель Feedback для хранения информации с обратной связью на странице 'contacts.html'."""
+    name = models.CharField(blank=False, max_length=100, verbose_name="Имя пользователя")
+    phone = models.CharField(blank=False, max_length=15, verbose_name="Телефон пользователя")
+    message = models.TextField(blank=False, verbose_name="Сообщение от пользователя")
+
+    def __str__(self):
+        """Метод определяет строковое представление объекта. Полезно для отображения объектов в админке/консоли."""
+        return f"{self.name}, {self.phone}"
+
+    class Meta:
+        verbose_name = "Отзыв"
+        verbose_name_plural = "Отзывы"
+        ordering = ["phone"]
+        db_table = "catalog_feedback"

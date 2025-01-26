@@ -2,13 +2,18 @@
 # from django.core.paginator import Paginator
 # from django.shortcuts import render, get_object_or_404
 # from django.http import HttpResponse
+#
 # from catalog.forms import ProductForm
 # from catalog.models import ContactsData, Product
 
 # ВАРИАНТ 2: импорты для CBV:
-from django.views.generic import ListView, TemplateView, DetailView, CreateView
+from django.shortcuts import get_object_or_404
+from django.views.generic import ListView, FormView, DetailView, CreateView
 from django.urls import reverse_lazy
-from catalog.models import ContactsData, Product
+from django.contrib import messages
+
+from catalog.forms import ContactForm, ProductForm
+from catalog.models import ContactsData, Product, Feedback
 
 
 # # ВАРИАНТ 1: использование FBV (function-based view):
@@ -93,10 +98,41 @@ class CatalogListView(ListView):
         return super().get_queryset()
 
 
-class CatalogTemplateView(TemplateView):
-    """Представление для отображения страницы с контактной информацией (contacts.html)."""
+class CatalogContactsView(FormView):
+    """Представление для отображения страницы с контактной информацией (contacts.html) и получением от
+    пользователя обратной связи."""
     model = ContactsData
     template_name = "catalog/contacts.html"
+    # Использую форму из 'catalog/forms.py' для заполнения и отправки пользователем обратной связи на странице
+    form_class = ContactForm
+    success_url = reverse_lazy("catalog:home_page")
+
+    def get_context_data(self, **kwargs):
+        """Добавление данных модели ContactsData (контактные данные из БД) в контекст шаблона."""
+        # Добавляю данные из модели ContactsData в контекст:
+        context = super().get_context_data(**kwargs)
+        # Меняю базовое наименование объекта на 'contacts_data', чтоб не менять код на странице contacts.html, так
+        # как эта страница уже использует название 'contacts_data':
+        context["contacts_data"] = get_object_or_404(ContactsData, id=1)
+        return context
+
+    def form_valid(self, form):
+        """Добавление отзыва пользователя в БД (модель Feedback) и отправка пользователю уведомления о том,
+        что его обратная связь успешно отправлена."""
+        # Логика обработки данных формы
+        name = form.cleaned_data["name"]
+        phone = form.cleaned_data["phone"]
+        message = form.cleaned_data["message"]
+        # Сохраняю данные в модель Feedback (таблица 'catalog_feedback' в БД)
+        Feedback.objects.create(
+            name=name,
+            phone=phone,
+            message=message
+        )
+        # С помощью стандартного механизма Django для уведомлений, отправляю пользователю сообщение
+        messages.success(self.request, f"Спасибо, {name}! Ваше сообщение успешно отправлено.")
+        # Возвращаем стандартное поведение формы
+        return super().form_valid(form)
 
 
 class CatalogDetailView(DetailView):
@@ -109,6 +145,7 @@ class CatalogDetailView(DetailView):
 class CatalogCreateView(CreateView):
     """Представление для отображения страницы с формой, которая позволяет пользователю добавлять новые товары в БД."""
     model = Product
-    fields = ["product_name", "description", "image", "category", "price"]
+    # Подключаю свою форму (catalog/forms.py/ProductForm) с тем, что ранее настраивал уже (стили)
+    form_class = ProductForm
     template_name = "catalog/add_your_product.html"
     success_url = reverse_lazy("catalog:home_page")

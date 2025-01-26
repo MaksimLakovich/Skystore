@@ -15,7 +15,7 @@ app_name = CatalogConfig.name
 # ВАРИАНТ 2: использование CBV (class-based view):
 urlpatterns = [
     path('home/', views.CatalogListView.as_view(), name='home_page'),
-    path('contacts/', views.CatalogTemplateView.as_view(), name='contacts_page'),
+    path('contacts/', views.CatalogContactsView.as_view(), name='contacts_page'),
     path('product/<int:pk>/', views.CatalogDetailView.as_view(), name='product_detail'),
     path('add/', views.CatalogCreateView.as_view(), name='add_your_product_page'),
 ]
