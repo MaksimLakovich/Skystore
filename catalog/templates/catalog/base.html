@@ -66,10 +66,49 @@
                 background-position: -200% 0;
                 }
             }
+
+        .text-muted {
+            font-size: 0.9rem;
+            color: #6c757d;
+            }
+
+        .text-muted .fa-eye {
+            font-size: 1rem;
+            color: #6c757d;
+            opacity: 0.7;
+            }
+
+        .card-body .d-flex span {
+            margin-right: 10px;
+            }
     </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 </head>
 
 <body>
+<!-- Подключение всплывающего уведомления для пользователя с благодарностью при отправке различных форм (например, "ОБРАТНАЯ СВЯЗЬ") -->
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+<script>
+    // Автоматическое скрытие сообщений через 5 секунд
+    setTimeout(function() {
+      var alerts = document.querySelectorAll('.alert');
+      alerts.forEach(function(alert) {
+        alert.classList.remove('show');
+        alert.classList.add('fade');
+        setTimeout(() => alert.remove(), 500); // Удалить элемент через 0.5 секунды после скрытия
+      });
+    }, 5000); // Через 5 секунд
+</script>
+{% endif %}
+
 <!-- Подключение подшаблона с меню (верхняя часть с навигацией) -->
 {% include 'catalog/menu.html' %}
 

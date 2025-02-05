@@ -2,10 +2,41 @@
 <nav aria-label="Page navigation">
     <ul class="pagination justify-content-center mt-5">
 
+<!--&lt;!&ndash;ВАРИАНТ 1: использование FBV (function-based view):&ndash;&gt;-->
+<!--        &lt;!&ndash; Ссылка на предыдущую страницу &ndash;&gt;-->
+<!--        {% if products.has_previous %}-->
+<!--        <li class="page-item">-->
+<!--            <a class="page-link" href="?page={{ products.previous_page_number }}">Предыдущая</a>-->
+<!--        </li>-->
+<!--        {% else %}-->
+<!--        <li class="page-item disabled">-->
+<!--            <a class="page-link">Предыдущая</a>-->
+<!--        </li>-->
+<!--        {% endif %}-->
+
+<!--        &lt;!&ndash; Ссылки на все страницы &ndash;&gt;-->
+<!--        {% for page_num in products.paginator.page_range %}-->
+<!--        <li class="page-item {% if products.number == page_num %}active{% endif %}">-->
+<!--            <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>-->
+<!--        </li>-->
+<!--        {% endfor %}-->
+
+<!--        &lt;!&ndash; Ссылка на следующую страницу &ndash;&gt;-->
+<!--        {% if products.has_next %}-->
+<!--        <li class="page-item">-->
+<!--            <a class="page-link" href="?page={{ products.next_page_number }}">Следующая</a>-->
+<!--        </li>-->
+<!--        {% else %}-->
+<!--        <li class="page-item disabled">-->
+<!--            <a class="page-link">Следующая</a>-->
+<!--        </li>-->
+<!--        {% endif %}-->
+
+<!--ВАРИАНТ 2: использование CBV (class-based view):-->
         <!-- Ссылка на предыдущую страницу -->
-        {% if products.has_previous %}
+        {% if page_obj.has_previous %}
         <li class="page-item">
-            <a class="page-link" href="?page={{ products.previous_page_number }}">Предыдущая</a>
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Предыдущая</a>
         </li>
         {% else %}
         <li class="page-item disabled">
@@ -14,16 +45,16 @@
         {% endif %}
 
         <!-- Ссылки на все страницы -->
-        {% for page_num in products.paginator.page_range %}
-        <li class="page-item {% if products.number == page_num %}active{% endif %}">
+        {% for page_num in page_obj.paginator.page_range %}
+        <li class="page-item {% if page_obj.number == page_num %}active{% endif %}">
             <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
         </li>
         {% endfor %}
 
         <!-- Ссылка на следующую страницу -->
-        {% if products.has_next %}
+        {% if page_obj.has_next %}
         <li class="page-item">
-            <a class="page-link" href="?page={{ products.next_page_number }}">Следующая</a>
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Следующая</a>
         </li>
         {% else %}
         <li class="page-item disabled">

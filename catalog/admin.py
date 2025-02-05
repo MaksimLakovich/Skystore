@@ -1,5 +1,5 @@
 from django.contrib import admin
-from catalog.models import Category, ContactsData, Product
+from catalog.models import Category, ContactsData, Product, Feedback
 
 
 @admin.register(Category)
@@ -21,3 +21,9 @@ class ProductAdmin(admin.ModelAdmin):
 class ContactsDataAdmin(admin.ModelAdmin):
     """Настройка отображения данных модели ContactsData в админке."""
     list_display = ("country", "tax_id", "address")
+
+@admin.register(Feedback)
+class FeedbackAdmin(admin.ModelAdmin):
+    list_display = ("id", "name", "phone", "message",)
+    list_filter = ("phone",)
+    search_fields = ("ame", "phone",)
