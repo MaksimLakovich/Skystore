@@ -7,7 +7,10 @@ class ProductForm(forms.ModelForm):
 
     class Meta:
         model = Product
-        fields = ['product_name', 'description', 'price', 'image', 'category']
+        # # ВАРИАНТ 1: перечисляем поля из модели, которые хотим отобразить в форме.
+        # fields = ['product_name', 'description', 'price', 'image', 'category']
+        # ВАРИАНТ 2: С использованием __all__, что автоматически добавляет все поля из модели в форму.
+        fields = "__all__"
         widgets = {
             'product_name': forms.TextInput(attrs={
                 'class': 'form-control',

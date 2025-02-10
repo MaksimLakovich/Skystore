@@ -129,11 +129,11 @@
    - Поля поиска: "product_name", "description".
 
 
-3) Для модели *ContactsData* в админке настроено отображение контактных данных (***ContactsDataAdmin***):
+3) Для модели *"ContactsData"* в админке настроено отображение контактных данных (***ContactsDataAdmin***):
    - Отображаемые поля: "country", "tax_id", "address".
 
 
-4) Для модели *Feedback* в админке настроено отображение обратной связи (***FeedbackAdmin***):
+4) Для модели *"Feedback"* в админке настроено отображение обратной связи (***FeedbackAdmin***):
    - Отображаемые поля: "id", "name", "phone", "message".
 
 

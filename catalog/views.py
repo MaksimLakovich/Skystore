@@ -1,21 +1,12 @@
-# # ВАРИАНТ 1: импорты для FBV:
+ # # ВАРИАНТ 1: импорты для FBV (function-based view):
 # from django.core.paginator import Paginator
 # from django.shortcuts import render, get_object_or_404
 # from django.http import HttpResponse
 #
 # from catalog.forms import ProductForm
 # from catalog.models import ContactsData, Product
-
-# ВАРИАНТ 2: импорты для CBV:
-from django.shortcuts import get_object_or_404
-from django.views.generic import ListView, FormView, DetailView, CreateView
-from django.urls import reverse_lazy
-from django.contrib import messages
-
-from catalog.forms import ContactForm, ProductForm
-from catalog.models import ContactsData, Product, Feedback
-
-
+#
+#
 # # ВАРИАНТ 1: использование FBV (function-based view):
 # def home_page(request):
 #     """Контроллер для отображения домашней страницы (home.html) с пагинацией.
@@ -79,6 +70,16 @@ from catalog.models import ContactsData, Product, Feedback
 #     return render(request, "catalog/add_your_product.html", {"form": form})
 
 
+# ВАРИАНТ 2: импорты для CBV (class-based view):
+from django.shortcuts import get_object_or_404
+from django.views.generic import ListView, FormView, DetailView, CreateView
+from django.urls import reverse_lazy
+from django.contrib import messages
+
+from catalog.forms import ContactForm, ProductForm
+from catalog.models import ContactsData, Product, Feedback
+
+
 # ВАРИАНТ 2: использование CBV (class-based view):
 class CatalogListView(ListView):
     """Представление для отображения домашней страницы (home.html) с пагинацией.
@@ -96,6 +97,22 @@ class CatalogListView(ListView):
         for product in latest_products:
             print(f"Название: {product.product_name}, Дата создания: {product.created_at}")
         return super().get_queryset()
+
+
+class CatalogDetailView(DetailView):
+    """Представление для отображения страницы с подробной информацией о продукте (product.html)."""
+    model = Product
+    template_name = "catalog/product.html"
+    context_object_name = "product"
+
+
+class CatalogCreateView(CreateView):
+    """Представление для отображения страницы с формой, которая позволяет пользователю добавлять новые товары в БД."""
+    model = Product
+    # Подключаю свою форму (catalog/forms.py/ProductForm) с тем, что ранее настраивал уже (стили)
+    form_class = ProductForm
+    template_name = "catalog/add_your_product.html"
+    success_url = reverse_lazy("catalog:home_page")
 
 
 class CatalogContactsView(FormView):
@@ -133,19 +150,3 @@ class CatalogContactsView(FormView):
         messages.success(self.request, f"Спасибо, {name}! Ваше сообщение успешно отправлено.")
         # Возвращаем стандартное поведение формы
         return super().form_valid(form)
-
-
-class CatalogDetailView(DetailView):
-    """Представление для отображения страницы с подробной информацией о продукте (product.html)."""
-    model = Product
-    template_name = "catalog/product.html"
-    context_object_name = "product"
-
-
-class CatalogCreateView(CreateView):
-    """Представление для отображения страницы с формой, которая позволяет пользователю добавлять новые товары в БД."""
-    model = Product
-    # Подключаю свою форму (catalog/forms.py/ProductForm) с тем, что ранее настраивал уже (стили)
-    form_class = ProductForm
-    template_name = "catalog/add_your_product.html"
-    success_url = reverse_lazy("catalog:home_page")
