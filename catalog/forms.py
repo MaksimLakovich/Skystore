@@ -1,4 +1,7 @@
 from django import forms
+from django.core.exceptions import ValidationError
+
+from config.config import FORBIDDEN_WORDS
 from .models import Product
 
 
@@ -7,9 +10,7 @@ class ProductForm(forms.ModelForm):
 
     class Meta:
         model = Product
-        # # ВАРИАНТ 1: перечисляем поля из модели, которые хотим отобразить в форме.
         # fields = ['product_name', 'description', 'price', 'image', 'category']
-        # ВАРИАНТ 2: С использованием __all__, что автоматически добавляет все поля из модели в форму.
         fields = "__all__"
         widgets = {
             'product_name': forms.TextInput(attrs={
@@ -34,11 +35,30 @@ class ProductForm(forms.ModelForm):
                 'class': 'form-control',
             }),
         }
-    # Убираю help_text для всех полей чтоб он на странице не выводился по умолчанию
+
     def __init__(self, *args, **kwargs):
+        """Убираю 'help_text' для всех полей чтоб это не выводилось по умолчанию на html-странице."""
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             field.help_text = None
+
+    def clean_product_name(self):
+        """Валидация атрибута формы 'product_name', которая проверяет отсутствие запрещенных слов в данном поле."""
+        product_name = self.cleaned_data.get('product_name')
+        words_in_product_name = product_name.split(' ')
+        for word in words_in_product_name:
+            if word.lower() in FORBIDDEN_WORDS:
+                raise ValidationError(f'Поле product_name.verbose_name не может содержать это слово')
+        return product_name
+
+    def clean_description(self):
+        """Валидация атрибута формы 'description', которая проверяет отсутствие запрещенных слов в данном поле."""
+        description = self.cleaned_data.get('description')
+        words_in_description = description.split(' ')
+        for word in words_in_description:
+            if word.lower() in FORBIDDEN_WORDS:
+                raise ValidationError(f'Поле description.verbose_name не может содержать это слово')
+        return description
 
 
 class ContactForm(forms.Form):
