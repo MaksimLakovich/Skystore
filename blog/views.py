@@ -37,7 +37,6 @@ class BlogCreateView(CreateView):
     """Представление для отображения страницы с формой, которая позволяет пользователю добавить новую статью в блог."""
     model = Article
     template_name = "blog/add_your_article.html"
-    # Подключаю свою форму (blog/forms.py/ArticleForm) с тем, что ранее настраивал уже (стили)
     form_class = ArticleForm
     success_url = reverse_lazy("blog:blog_page")
 

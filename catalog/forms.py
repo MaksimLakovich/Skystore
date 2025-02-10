@@ -1,3 +1,5 @@
+import re
+
 from django import forms
 from django.core.exceptions import ValidationError
 
@@ -44,20 +46,25 @@ class ProductForm(forms.ModelForm):
 
     def clean_product_name(self):
         """Валидация атрибута формы 'product_name', которая проверяет отсутствие запрещенных слов в данном поле."""
-        product_name = self.cleaned_data.get('product_name')
-        words_in_product_name = product_name.split(' ')
-        for word in words_in_product_name:
-            if word.lower() in FORBIDDEN_WORDS:
-                raise ValidationError(f'Поле product_name.verbose_name не может содержать это слово')
+        product_name = self.cleaned_data.get('product_name', '')
+        for word in FORBIDDEN_WORDS:
+            # Регулярное выражение проверяет запрещенное слово даже если оно будет написано без пробела или с
+            # точкой/запятой (например, "криптовалюта,").
+            # re.IGNORECASE - сделает регулярное выражение нечувствительным к регистру.
+            if re.search(rf'\b{word}\b', product_name, re.IGNORECASE):
+                # Django формы имеют атрибут self.fields['product_name'].label, который хранит читаемое имя поля (то,
+                # что будет видно в форме для пользователя, чтоб вывести в предупреждении потом красиво.)
+                field_label = self.fields['product_name'].label
+                raise ValidationError(f'Поле {field_label} не может содержать это слово')
         return product_name
 
     def clean_description(self):
         """Валидация атрибута формы 'description', которая проверяет отсутствие запрещенных слов в данном поле."""
-        description = self.cleaned_data.get('description')
-        words_in_description = description.split(' ')
-        for word in words_in_description:
-            if word.lower() in FORBIDDEN_WORDS:
-                raise ValidationError(f'Поле description.verbose_name не может содержать это слово')
+        description = self.cleaned_data.get('description', '')
+        for word in FORBIDDEN_WORDS:
+            if re.search(rf'\b{word}\b', description, re.IGNORECASE):
+                field_label = self.fields['description'].label
+                raise ValidationError(f'Поле {field_label} не может содержать это слово')
         return description
 
 
