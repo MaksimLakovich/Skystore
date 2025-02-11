@@ -15,34 +15,28 @@ class ProductForm(forms.ModelForm):
         # fields = ['product_name', 'description', 'price', 'image', 'category']
         fields = "__all__"
         widgets = {
-            'product_name': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Введите название вашего продукта (max: 100 символов)',
-                'required': True,
-            }),
-            'description': forms.Textarea(attrs={
-                'class': 'form-control',
-                'placeholder': 'Введите описание вашего продукта',
-                'required': True,
-            }),
-            'price': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Укажите стоимость вашего продукта',
-                'required': True,
-            }),
-            'image': forms.ClearableFileInput(attrs={
-                'class': 'form-control',
-            }),
-            'category': forms.Select(attrs={
-                'class': 'form-control',
-            }),
+            'product_name': forms.TextInput(attrs={'placeholder': 'Введите название продукта (max: 100 символов)'}),
+            'description': forms.Textarea(attrs={'placeholder': 'Введите описание продукта'}),
+            'price': forms.NumberInput(attrs={'placeholder': 'Укажите стоимость продукта'}),
+            'image': forms.ClearableFileInput(),
+            'category': forms.Select(),
         }
 
     def __init__(self, *args, **kwargs):
-        """Убираю 'help_text' для всех полей чтоб это не выводилось по умолчанию на html-странице."""
+        """Добавляем CSS-классы ко всем полям формы. Убираем 'help_text' для всех полей, чтоб это больше не выводилось
+        по умолчанию на html-странице."""
         super().__init__(*args, **kwargs)
+
+        # ШАГ 1: Убираю help_text из вывода на странице, так как help_text из model.py и дублирует то,
+        # что и так уже автоматически создает forms.ModelForm.
         for field_name, field in self.fields.items():
             field.help_text = None
+            # ШАГ 2: Добавляю класс "form-control" для всех полей, кроме чекбоксов:
+            if not isinstance(field.widget, forms.CheckboxInput):
+                field.widget.attrs['class'] = 'form-control'
+            # ШАГ 3: Добавляю класс "form-check-input" для чекбоксов, если появится:
+            if isinstance(field.widget, forms.CheckboxInput):
+                field.widget.attrs['class'] = 'form-check-input'
 
     def clean_product_name(self):
         """Валидация атрибута формы 'product_name', которая проверяет отсутствие запрещенных слов в данном поле."""
