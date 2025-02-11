@@ -55,7 +55,7 @@ class ProductForm(forms.ModelForm):
                 # Django формы имеют атрибут self.fields['product_name'].label, который хранит читаемое имя поля (то,
                 # что будет видно в форме для пользователя, чтоб вывести в предупреждении потом красиво.)
                 field_label = self.fields['product_name'].label
-                raise ValidationError(f'Поле {field_label} не может содержать это слово')
+                raise ValidationError(f'Поле "{field_label}" не может содержать это слово')
         return product_name
 
     def clean_description(self):
@@ -64,8 +64,16 @@ class ProductForm(forms.ModelForm):
         for word in FORBIDDEN_WORDS:
             if re.search(rf'\b{word}\b', description, re.IGNORECASE):
                 field_label = self.fields['description'].label
-                raise ValidationError(f'Поле {field_label} не может содержать это слово')
+                raise ValidationError(f'Поле "{field_label}" не может содержать это слово')
         return description
+
+    def clean_price(self):
+        """Валидация атрибута формы 'price', которая проверяет что цена не отрицательная."""
+        price = self.cleaned_data.get('price')
+        if price < 0:
+            field_label = self.fields['price'].label
+            raise ValidationError(f'Поле "{field_label}" не может быть отрицательным.')
+        return price
 
 
 class ContactForm(forms.Form):
