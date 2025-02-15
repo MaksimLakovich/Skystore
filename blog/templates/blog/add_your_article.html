@@ -15,24 +15,25 @@
                 <!-- Отображение формы ArticleForm(forms.ModelForm) для добавления пользователем новой статьи-->
                 <form method="post" enctype="multipart/form-data" class="form-floating">
                     {% csrf_token %}
-                    <div class="form-group mb-4">
-                        <label for="article_title"><strong>{{ form.article_title.label }}</strong></label>
-                        <div>
-                            {{ form.article_title }}
-                        </div>
-                    </div>
-                    <div class="form-group mb-4">
-                        <label for="article_contents"><strong>{{ form.article_contents.label }}</strong></label>
-                        <div>
-                            {{ form.article_contents }}
-                        </div>
-                    </div>
-                    <div class="form-group mb-4">
-                        <label for="image"><strong>{{ form.image.label }}</strong></label>
-                        <div>
-                            {{ form.image }}
-                        </div>
-                    </div>
+                    {{ form.as_p }}
+<!--                    <div class="form-group mb-4">-->
+<!--                        <label for="article_title"><strong>{{ form.article_title.label }}</strong></label>-->
+<!--                        <div>-->
+<!--                            {{ form.article_title }}-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="form-group mb-4">-->
+<!--                        <label for="article_contents"><strong>{{ form.article_contents.label }}</strong></label>-->
+<!--                        <div>-->
+<!--                            {{ form.article_contents }}-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="form-group mb-4">-->
+<!--                        <label for="image"><strong>{{ form.image.label }}</strong></label>-->
+<!--                        <div>-->
+<!--                            {{ form.image }}-->
+<!--                        </div>-->
+<!--                    </div>-->
 
                     <!-- Кнопки -->
                     <div class="text-center">
