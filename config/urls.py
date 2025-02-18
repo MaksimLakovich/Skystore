@@ -25,6 +25,7 @@ urlpatterns = [
     # namespace='catalog' это заданное пространство имен, которое есть в catalog/urls.py с помощью CatalogConfig.name
     path('catalog/', include('catalog.urls', namespace='catalog')),
     path('blog/', include('blog.urls', namespace='blog')),
+    # path('users/', include('users.urls', namespace='users'))
 ]
 
 if settings.DEBUG:
