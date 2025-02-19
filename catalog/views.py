@@ -70,14 +70,15 @@
 #     return render(request, "catalog/add_your_product.html", {"form": form})
 
 
+from django.contrib import messages
 # ВАРИАНТ 2: импорты для CBV (class-based view):
 from django.shortcuts import get_object_or_404
-from django.views.generic import ListView, FormView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse, reverse_lazy
-from django.contrib import messages
+from django.views.generic import (CreateView, DeleteView, DetailView, FormView,
+                                  ListView, UpdateView)
 
 from catalog.forms import ContactForm, ProductForm
-from catalog.models import ContactsData, Product, Feedback
+from catalog.models import ContactsData, Feedback, Product
 
 
 # ВАРИАНТ 2: использование CBV (class-based view):

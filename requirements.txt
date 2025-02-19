@@ -10,6 +10,7 @@ django-phonenumber-field==8.0.0
 executing==2.1.0
 idna==3.10
 ipython==8.31.0
+isort==6.0.0
 jedi==0.19.2
 matplotlib-inline==0.1.7
 mypy==1.14.1
