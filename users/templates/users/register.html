@@ -1,0 +1,33 @@
+<!-- users/templates/users/register.html -->
+{% extends "catalog/base.html" %}
+
+{% block title %}Регистрация{% endblock %}
+
+{% block content %}
+
+<!--Блок с базовым описанием сути страницы-->
+<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1 class="display-4 mb-5">Регистрация в магазине Skystore</h1>
+</div>
+
+<div class="container">
+    <div class="row text-start">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="card-body">
+                <form method="post">
+
+                    {% csrf_token %}
+                    {{ form.as_p }}
+
+                    <!-- Кнопки -->
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-lg btn-primary mt-4">Зарегистрироваться</button>
+                        <a href="{% url 'catalog:home_page' %}" class="btn btn-lg btn-outline-primary mt-4">Вернуться на главную страницу</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
