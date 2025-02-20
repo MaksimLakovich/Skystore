@@ -182,7 +182,12 @@
    - Отображаемые поля: "id", "name", "phone", "message".
 
 ## _Приложение "Blog" ():_
-## _Приложение "Users" ():_
+
+## _Приложение "Users" (users/admin.py):_
+
+1) Для модели *"UserAdmin"* в админке настроено отображение данных (***UserCustomerAdmin***):
+   - Отображаемые поля: "email", "username", "first_name", "last_name", "is_staff", "is_superuser";
+   - Поля поиска: "email", "username", "first_name", "last_name".
 
 
 
