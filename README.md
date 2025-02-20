@@ -190,7 +190,11 @@
    - `add_products.py` - кастомная команда для ЗАГРУЗКИ данных в БД из фикстуры.
 
 ## _Приложение "Blog" ():_
-## _Приложение "Users" ():_
+
+## _Приложение "Users" (users/management/commands/):_
+
+1) Для модели *"UserCustomer"* созданы следующие кастомные команды:
+   - `createadmin.py` - кастомная команда для СОЗДАНИЯ администратора.
 
 
 
@@ -275,3 +279,9 @@ pip install -r requirements.txt
      - DATABASE_PASSWORD = *write_here*
      - DATABASE_HOST = *write_here*
      - DATABASE_PORT = *write_here*
+   - Настройка SMTP-сервера Яндекса для отправки уведомлений пользователям магазина по почте:
+     - YANDEX_EMAIL_HOST_USER = '*write_here*'
+     - YANDEX_EMAIL_HOST_PASSWORD = '*write_here*'
+   - Данные почты и устанавливаемого пароля для создания Администратора с помощью кастомной команды:
+     - ADMIN_EMAIL = '*write_here*'
+     - ADMIN_PASSWORD = '*write_here*'
