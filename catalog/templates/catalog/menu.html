@@ -1,9 +1,37 @@
-<!--Подшаблон с меню (верхняя часть с навигацией)-->
-<div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-5 bg-white border-bottom box-shadow">
-    <h5 class="my-0 mr-md-auto font-weight-normal">Skystore</h5>
+<!-- Подшаблон с меню (верхняя часть с навигацией) -->
+<div class="d-flex justify-content-between align-items-center p-3 px-md-4 mb-5 bg-white border-bottom box-shadow">
+
+    <!-- Логотип магазина и кнопки навигации по разделам магазина -->
+    <div class="d-flex align-items-center">
+        <h5 class="my-0 mr-md-auto font-weight-normal">Skystore</h5>
+        <!--Кнопки навигации по разделам магазина -->
+        <nav class="ms-5">
+            <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:home_page' %}">Каталог</a>
+            <a class="p-2 btn btn-outline-primary" href="{% url 'blog:blog_page' %}">Блог</a>
+            <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:contacts_page' %}">Контакты</a>
+        </nav>
+    </div>
+
+    <!-- Блок с меню аутентификации (аватарка, регистрация, войти, выйти)-->
     <nav class="ms-5">
-        <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:home_page' %}">Каталог</a>
-        <a class="p-2 btn btn-outline-primary" href="{% url 'blog:blog_page' %}">Блог</a>
-        <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:contacts_page' %}">Контакты</a>
+        {% if user.is_authenticated %}
+        <div class="dropdown">
+            <a class="avatar-link dropdown-toggle" href="#" role="button" id="dropdownMenuButton" title="Посмотреть профиль"
+               data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="{% if user.avatar and user.avatar.name %}{{ user.avatar.url }}{% else %}/static/images/default_avatar.png{% endif %}"
+                     alt="Аватар"
+                     class="user-avatar">
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                <li><span class="dropdown-item-text">{{ user.email }}</span></li>
+                <li><a class="dropdown-item" href="#">Редактировать профиль</a></li>
+                <li><a class="dropdown-item" href="#">Выйти</a></li>
+            </ul>
+        </div>
+        {% else %}
+        <a class="p-2 btn btn-outline-primary" href="#">Войти</a>
+        <a class="p-2 btn btn-outline-primary" href="{% url 'users:register' %}">Регистрация</a>
+        {% endif %}
     </nav>
+
 </div>
