@@ -16,7 +16,8 @@
     <nav class="ms-5">
         {% if user.is_authenticated %}
         <div class="dropdown">
-            <a class="avatar-link dropdown-toggle" href="#" role="button" id="dropdownMenuButton" title="Посмотреть профиль"
+            <a class="avatar-link dropdown-toggle" href="#" role="button" id="dropdownMenuButton"
+               title="Посмотреть профиль"
                data-bs-toggle="dropdown" aria-expanded="false">
                 <img src="{% if user.avatar and user.avatar.name %}{{ user.avatar.url }}{% else %}/static/images/default_avatar.png{% endif %}"
                      alt="Аватар"
@@ -25,11 +26,16 @@
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
                 <li><span class="dropdown-item-text">{{ user.email }}</span></li>
                 <li><a class="dropdown-item" href="#">Редактировать профиль</a></li>
-                <li><a class="dropdown-item" href="#">Выйти</a></li>
+                <li>
+                    <form method="post" action="{% url 'users:logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="dropdown-item">Выйти</button>
+                    </form>
+                </li>
             </ul>
         </div>
         {% else %}
-        <a class="p-2 btn btn-outline-primary" href="#">Войти</a>
+        <a class="p-2 btn btn-outline-primary" href="{% url 'users:login' %}">Войти</a>
         <a class="p-2 btn btn-outline-primary" href="{% url 'users:register' %}">Регистрация</a>
         {% endif %}
     </nav>

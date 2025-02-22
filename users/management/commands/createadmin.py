@@ -14,7 +14,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         User = get_user_model()  # Получаем модель пользователя
         admin_email = os.getenv("ADMIN_EMAIL")  # Устанавливаю почту админа из .env
-        admin_password = os.getenv("ADMIN_PASSWORD")  #  Устанавливаю пароль админа из .env
+        admin_password = os.getenv("ADMIN_PASSWORD")  # Устанавливаю пароль админа из .env
 
         if User.objects.filter(email=admin_email).exists():
             self.stdout.write(self.style.WARNING(f"Администратор с почтой {admin_email} уже существует."))
@@ -22,7 +22,6 @@ class Command(BaseCommand):
             user = User.objects.create_superuser(
                 email=admin_email,
                 password=admin_password,
-                username="Admin",
                 first_name="Admin",
                 last_name="Admin",
             )

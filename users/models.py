@@ -1,11 +1,13 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField  # type: ignore
+from users.managers import UserCustomerManager
 
 
 class UserCustomer(AbstractUser):
     """Модель UserCustomer представляет пользователя магазина."""
 
+    username = None
     email = models.EmailField(
         unique=True, verbose_name="Email", help_text="Введите email"
     )
@@ -30,10 +32,10 @@ class UserCustomer(AbstractUser):
         help_text="Укажите страну",
     )
 
+    objects = UserCustomerManager()  # Указываю кастомный менеджер для пользователя без поля username.
+
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = [
-        "username",
-    ]
+    REQUIRED_FIELDS = []
 
     def __str__(self):
         """Метод определяет строковое представление объекта. Полезно для отображения объектов в админке/консоли."""

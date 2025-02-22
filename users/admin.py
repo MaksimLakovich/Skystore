@@ -8,8 +8,8 @@ from users.models import UserCustomer
 class UserCustomerAdmin(UserAdmin):
     """Настройка отображения модели пользователя в админке."""
 
-    list_display = ("email", "username", "first_name", "last_name", "is_staff", "is_superuser")
-    search_fields = ("email", "username", "first_name", "last_name")
+    list_display = ("email", "first_name", "last_name", "is_staff", "is_superuser")
+    search_fields = ("email", "first_name", "last_name")
     ordering = ("email",)
     # Группирует поля при редактировании пользователя:
     fieldsets = (
@@ -18,7 +18,6 @@ class UserCustomerAdmin(UserAdmin):
             "Персональная информация",
             {
                 "fields": (
-                    "username",
                     "first_name",
                     "last_name",
                     "avatar",
@@ -38,7 +37,6 @@ class UserCustomerAdmin(UserAdmin):
                 "classes": ("wide",),
                 "fields": (
                     "email",
-                    "username",
                     "first_name",
                     "last_name",
                     "password1",

@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core.exceptions import ValidationError
 
 from users.models import UserCustomer
@@ -39,7 +39,7 @@ class UserCustomerRegistrationForm(UserCreationForm):
             # ШАГ 2: Добавляю класс "form-control" для всех полей.
             if not isinstance(field.widget, forms.CheckboxInput):
                 field.widget.attrs["class"] = "form-control"
-            # ШАГ 2: Добавляю placeholder вручную для наших полей формы регистрации.
+            # ШАГ 3: Добавляю placeholder вручную для наших полей формы регистрации.
             placeholders = {
                 "email": "Введите email",
                 "password1": "Введите пароль",
@@ -47,3 +47,24 @@ class UserCustomerRegistrationForm(UserCreationForm):
             }
             if field_name in placeholders:
                 field.widget.attrs["placeholder"] = placeholders[field_name]
+
+
+class UserCustomerLoginForm(AuthenticationForm):
+    """Форма для входа ранее зарегистрированного пользователя на сайт магазина."""
+
+    def __init__(self, *args, **kwargs):
+        """Заменяю username на email. Добавляю CSS-классы ко всем полям формы. Убираю 'help_text' для всех полей,
+        чтоб это больше не выводилось по умолчанию на html-странице."""
+        super().__init__(*args, **kwargs)
+
+        # Django использует "username" как ключ, но у нас логин по email
+        self.fields["username"].widget = forms.EmailInput(attrs={
+            "class": "form-control",
+            "placeholder": "Введите email"
+        })
+        self.fields["password"].widget = forms.PasswordInput(attrs={
+            "class": "form-control",
+            "placeholder": "Введите пароль"
+        })
+        for field_name, field in self.fields.items():
+            field.help_text = None
