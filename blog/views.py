@@ -1,7 +1,13 @@
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse, reverse_lazy
-from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
-                                  UpdateView)
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
+)
 
 from blog.forms import ArticleForm
 from blog.models import Article
@@ -9,6 +15,7 @@ from blog.models import Article
 
 class BlogListView(ListView):
     """Представление для отображения домашней страницы (blogs.html) с пагинацией и счетчиком просмотров."""
+
     model = Article
     template_name = "blog/blogs.html"
     context_object_name = "articles"
@@ -20,8 +27,9 @@ class BlogListView(ListView):
         return super().get_queryset().filter(is_published=True).order_by("-create_at")
 
 
-class BlogDetailView(DetailView):
+class BlogDetailView(LoginRequiredMixin, DetailView):
     """Представление для отображения страницы с подробной информацией о статье (article.html)."""
+
     model = Article
     template_name = "blog/article.html"
     context_object_name = "article"
@@ -34,8 +42,9 @@ class BlogDetailView(DetailView):
         return self.object
 
 
-class BlogCreateView(CreateView):
+class BlogCreateView(LoginRequiredMixin, CreateView):
     """Представление для отображения страницы с формой, которая позволяет пользователю добавить новую статью в блог."""
+
     model = Article
     template_name = "blog/add_your_article.html"
     form_class = ArticleForm
@@ -44,13 +53,17 @@ class BlogCreateView(CreateView):
     def form_valid(self, form):
         """Отправка пользователю уведомления о том, что его статья успешно отправлена."""
         # С помощью стандартного механизма Django для уведомлений, отправляю пользователю сообщение
-        messages.success(self.request, f"Спасибо! Ваша статья добавлена и появится после проверки модератора.")
+        messages.success(
+            self.request,
+            f"Спасибо! Ваша статья добавлена и появится после проверки модератора.",
+        )
         # Возвращаем стандартное поведение формы
         return super().form_valid(form)
 
 
-class BlogUpdateView(UpdateView):
+class BlogUpdateView(LoginRequiredMixin, UpdateView):
     """Представление для редактирования статьи в блоге."""
+
     model = Article
     template_name = "blog/add_your_article.html"
     form_class = ArticleForm
@@ -60,12 +73,18 @@ class BlogUpdateView(UpdateView):
         return reverse("blog:article_detail_page", kwargs={"pk": self.object.pk})
 
 
-class BlogDeleteView(DeleteView):
+class BlogDeleteView(LoginRequiredMixin, DeleteView):
     """Представление для удаления статьи в блоге."""
+
     model = Article
     template_name = "blog/article_confirm_delete.html"
     success_url = reverse_lazy("blog:blog_page")
     context_object_name = "article"
+
+    object: Article  # Добавляю явную аннотацию чтоб не ругался MYPY
+
+    def get_object(self, queryset=None):
+        return super().get_object(queryset)
 
     def form_valid(self, form):
         """Отправка пользователю уведомления о том, что статья была удалена."""
