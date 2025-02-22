@@ -1,5 +1,9 @@
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import (
+    AuthenticationForm,
+    UserCreationForm,
+    PasswordChangeForm,
+)
 from django.core.exceptions import ValidationError
 
 from users.models import UserCustomer
@@ -14,7 +18,9 @@ class UserCustomerRegistrationForm(UserCreationForm):
         widgets = {
             "email": forms.EmailInput(attrs={"placeholder": "Введите email"}),
             "password1": forms.PasswordInput(attrs={"placeholder": "Введите пароль"}),
-            "password2": forms.PasswordInput(attrs={"placeholder": "Введите пароль повторно"}),
+            "password2": forms.PasswordInput(
+                attrs={"placeholder": "Введите пароль повторно"}
+            ),
         }
 
     def clean_email(self):
@@ -24,7 +30,9 @@ class UserCustomerRegistrationForm(UserCreationForm):
         пользователю в форме, что такой email уже занят."""
         email = self.cleaned_data.get("email")
         if UserCustomer.objects.filter(email=email).exists():
-            raise ValidationError("Этот email уже используется. Пожалуйста, выберите другой.")
+            raise ValidationError(
+                "Этот email уже используется. Пожалуйста, выберите другой."
+            )
         return email
 
     def __init__(self, *args, **kwargs):
@@ -58,14 +66,12 @@ class UserCustomerLoginForm(AuthenticationForm):
         super().__init__(*args, **kwargs)
 
         # Django использует "username" как ключ, но у нас логин по email
-        self.fields["username"].widget = forms.EmailInput(attrs={
-            "class": "form-control",
-            "placeholder": "Введите email"
-        })
-        self.fields["password"].widget = forms.PasswordInput(attrs={
-            "class": "form-control",
-            "placeholder": "Введите пароль"
-        })
+        self.fields["username"].widget = forms.EmailInput(
+            attrs={"class": "form-control", "placeholder": "Введите email"}
+        )
+        self.fields["password"].widget = forms.PasswordInput(
+            attrs={"class": "form-control", "placeholder": "Введите пароль"}
+        )
         for field_name, field in self.fields.items():
             field.help_text = None
 
@@ -75,14 +81,27 @@ class UserProfileEditForm(forms.ModelForm):
 
     class Meta:
         model = UserCustomer
-        fields = ("email", "avatar", "first_name", "last_name", "phone_number", "country")
+        fields = (
+            "email",
+            "avatar",
+            "first_name",
+            "last_name",
+            "phone_number",
+            "country",
+        )
         widgets = {
-            "email": forms.EmailInput(attrs={"readonly": "readonly"}),  # Email нельзя редактировать (readonly)
+            "email": forms.EmailInput(
+                attrs={"readonly": "readonly"}
+            ),  # Email нельзя редактировать (readonly)
             "avatar": forms.FileInput(),
             "first_name": forms.TextInput(attrs={"placeholder": "Введите имя"}),
             "last_name": forms.TextInput(attrs={"placeholder": "Введите фамилию"}),
-            "phone_number": forms.TextInput(attrs={"placeholder": "Введите номер телефона"}),
-            "country": forms.TextInput(attrs={"placeholder": "Укажите страну проживания"}),
+            "phone_number": forms.TextInput(
+                attrs={"placeholder": "Введите номер телефона"}
+            ),
+            "country": forms.TextInput(
+                attrs={"placeholder": "Укажите страну проживания"}
+            ),
         }
 
     def __init__(self, *args, **kwargs):
@@ -92,3 +111,23 @@ class UserProfileEditForm(forms.ModelForm):
             field.help_text = None
             if not isinstance(field.widget, forms.CheckboxInput):
                 field.widget.attrs["class"] = "form-control"
+
+
+class UserPasswordChangeForm(PasswordChangeForm):
+    """Форма для смены пароля пользователя."""
+
+    def __init__(self, *args, **kwargs):
+        """Добавляю CSS-классы и placeholders к полям смены пароля."""
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs["class"] = "form-control"
+            field.help_text = None
+        self.fields["old_password"].widget.attrs[
+            "placeholder"
+        ] = "Введите текущий пароль"
+        self.fields["new_password1"].widget.attrs[
+            "placeholder"
+        ] = "Введите новый пароль"
+        self.fields["new_password2"].widget.attrs[
+            "placeholder"
+        ] = "Подтвердите новый пароль"

@@ -2,14 +2,19 @@ import os
 
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, PasswordChangeView
 from django.core.mail import send_mail
 from django.urls import reverse_lazy
 from django.views.generic import UpdateView
 from django.views.generic.edit import FormView
 from dotenv import load_dotenv
 
-from users.forms import UserCustomerRegistrationForm, UserCustomerLoginForm, UserProfileEditForm
+from users.forms import (
+    UserCustomerRegistrationForm,
+    UserCustomerLoginForm,
+    UserProfileEditForm,
+    UserPasswordChangeForm,
+)
 from users.models import UserCustomer
 
 # Загрузка переменных из .env-файла
@@ -27,7 +32,9 @@ class CustomRegisterView(FormView):
         """Сохранение нового пользователя и автоматический вход после регистрации."""
         user = form.save()
         login(self.request, user)
-        self.send_welcome_email(user)  # Запрос на отправку приветственного письма после регистрации
+        self.send_welcome_email(
+            user
+        )  # Запрос на отправку приветственного письма после регистрации
         return super().form_valid(form)
 
     def send_welcome_email(self, user):
@@ -41,7 +48,9 @@ class CustomRegisterView(FormView):
         )
         from_email = os.getenv("YANDEX_EMAIL_HOST_USER")
         if not from_email:
-            raise ValueError("Переменная окружения YANDEX_EMAIL_HOST_USER не загружена!")
+            raise ValueError(
+                "Переменная окружения YANDEX_EMAIL_HOST_USER не загружена!"
+            )
         recipient_list = [user.email]
         send_mail(
             subject=subject,
@@ -64,7 +73,8 @@ class CustomLoginView(LoginView):
 
     def get_success_url(self):
         """Явно указываю редирект переопределяя метод, так как обычный вариант в виде "success_url = reverse_lazy(
-        'catalog:home_page'" не работал. Django его игнорировал и отправлял на /accounts/profile/"""
+        'catalog:home_page'" не работал. Django его игнорировал и отправлял на /accounts/profile/
+        """
         return reverse_lazy("catalog:home_page")
 
     def form_valid(self, form):
@@ -103,7 +113,9 @@ class CustomEditProfileView(LoginRequiredMixin, UpdateView):
 
         from_email = os.getenv("YANDEX_EMAIL_HOST_USER")
         if not from_email:
-            raise ValueError("Переменная окружения YANDEX_EMAIL_HOST_USER не загружена!")
+            raise ValueError(
+                "Переменная окружения YANDEX_EMAIL_HOST_USER не загружена!"
+            )
         recipient_list = [user.email]
         send_mail(
             subject=subject,
@@ -112,3 +124,11 @@ class CustomEditProfileView(LoginRequiredMixin, UpdateView):
             recipient_list=recipient_list,
             fail_silently=False,
         )
+
+
+class CustomPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
+    """Представление для изменения пароля пользователя (change_password.html)."""
+
+    form_class = UserPasswordChangeForm
+    template_name = "users/change_password.html"
+    success_url = reverse_lazy("catalog:home_page")  # Редирект после изменения пароля

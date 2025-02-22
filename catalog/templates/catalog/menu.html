@@ -26,6 +26,7 @@
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
                 <li><span class="dropdown-item-text">{{ user.email }}</span></li>
                 <li><a class="dropdown-item" href="{% url 'users:edit_profile' %}">Редактировать профиль</a></li>
+                <li><a class="dropdown-item" href="{% url 'users:change_password' %}">Изменить пароль</a></li>
                 <li>
                     <form method="post" action="{% url 'users:logout' %}">
                         {% csrf_token %}
