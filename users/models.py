@@ -9,27 +9,41 @@ class UserCustomer(AbstractUser):
 
     username = None
     email = models.EmailField(
-        unique=True, verbose_name="Email", help_text="Введите email"
+        unique=True,
+        verbose_name="Почта (username):",
+        help_text="Введите email",
     )
     avatar = models.ImageField(
         upload_to="user_avatar",
         blank=True,
         null=True,
-        verbose_name="Аватар пользователя",
+        verbose_name="Аватар:",
         help_text="Загрузите аватар",
     )
     phone_number = PhoneNumberField(
         blank=True,
         null=True,
-        verbose_name="Телефон пользователя",
+        verbose_name="Телефон:",
         help_text="Введите телефон",
     )
     country = models.CharField(
         max_length=50,
         blank=True,
         null=True,
-        verbose_name="Страна пользователя",
+        verbose_name="Страна проживания:",
         help_text="Укажите страну",
+    )
+    first_name = models.CharField(
+        max_length=30,
+        blank=True,
+        verbose_name="Имя:",
+        help_text="Введите имя"
+    )
+    last_name = models.CharField(
+        max_length=30,
+        blank=True,
+        verbose_name="Фамилия:",
+        help_text="Введите фамилию"
     )
 
     objects = UserCustomerManager()  # Указываю кастомный менеджер для пользователя без поля username.

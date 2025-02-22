@@ -68,3 +68,27 @@ class UserCustomerLoginForm(AuthenticationForm):
         })
         for field_name, field in self.fields.items():
             field.help_text = None
+
+
+class UserProfileEditForm(forms.ModelForm):
+    """Форма для редактирования профиля зарегистрированного пользователя на сайте магазина."""
+
+    class Meta:
+        model = UserCustomer
+        fields = ("email", "avatar", "first_name", "last_name", "phone_number", "country")
+        widgets = {
+            "email": forms.EmailInput(attrs={"readonly": "readonly"}),  # Email нельзя редактировать (readonly)
+            "avatar": forms.FileInput(),
+            "first_name": forms.TextInput(attrs={"placeholder": "Введите имя"}),
+            "last_name": forms.TextInput(attrs={"placeholder": "Введите фамилию"}),
+            "phone_number": forms.TextInput(attrs={"placeholder": "Введите номер телефона"}),
+            "country": forms.TextInput(attrs={"placeholder": "Укажите страну проживания"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        """Добавляю CSS-классы ко всем полям формы. Убираю 'help_text' для всех полей."""
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.help_text = None
+            if not isinstance(field.widget, forms.CheckboxInput):
+                field.widget.attrs["class"] = "form-control"
