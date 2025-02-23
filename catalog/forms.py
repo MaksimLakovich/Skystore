@@ -3,7 +3,9 @@ import re
 from django import forms
 from django.core.exceptions import ValidationError
 
-from config.config import ALLOWED_IMAGE_FORMATS, FORBIDDEN_WORDS, MAX_IMAGE_SIZE
+from config.config import (ALLOWED_IMAGE_FORMATS, FORBIDDEN_WORDS,
+                           MAX_IMAGE_SIZE)
+
 from .models import Product
 
 
