@@ -24,8 +24,9 @@ class ArticleForm(forms.ModelForm):
                 'class': 'form-control',
             }),
         }
-    # Убираю help_text для всех полей чтоб он на странице не выводился по умолчанию
+
     def __init__(self, *args, **kwargs):
+        """Убираем параметр 'help_text' для всех полей, чтоб это больше не выводилось по умолчанию на html-странице."""
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             field.help_text = None

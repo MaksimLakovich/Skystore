@@ -46,11 +46,19 @@ class CatalogCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy("catalog:home_page")
 
     def form_valid(self, form):
-        """Отправка пользователю уведомления о том, что его продукт успешно добавлен."""
+        """1) Отправка пользователю уведомления о том, что его продукт успешно добавлен.
+        2) Автоматическое заполнение текущим пользователем поля 'owner' при создании нового продукта."""
+        form.instance.owner = self.request.user  # Привязываю текущего пользователя как owner
         # С помощью стандартного механизма Django для уведомлений, отправляю пользователю сообщение
         messages.success(self.request, f"Спасибо! Ваш продукт успешно добавлен.")
-        # Возвращаем стандартное поведение формы
+        # Возвращаю стандартное поведение формы
         return super().form_valid(form)
+
+    def get_form_kwargs(self):
+        """Передаю текущего пользователя в форму."""
+        kwargs = super().get_form_kwargs()
+        kwargs["initial"] = {"owner": self.request.user} # Передаём текущего пользователя, чтоб он сразу отображался
+        return kwargs
 
 
 class CatalogUpdateView(LoginRequiredMixin, UpdateView):
