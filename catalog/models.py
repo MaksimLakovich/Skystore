@@ -1,4 +1,7 @@
+from django.conf import settings
 from django.db import models
+
+import users.models
 
 
 class Category(models.Model):
@@ -27,6 +30,18 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_published = models.BooleanField(default=False, null=False, blank=False, verbose_name="Признак публикации", help_text="Зафиксируйте факт публикации")
+    owner = models.ForeignKey(
+        null=True,  # Разрешаем пустые значения в БД
+        blank=True,  # Разрешаем пустое поле в формах
+        default=None,  # По умолчанию None
+        # Динамически подставляю текущую user модель, чего не делает такой простой вариант как "to=users.models.UserCustomer".
+        # Если мы когда-нибудь изменим AUTH_USER_MODEL в settings.py, модель Product автоматически обновится.
+        to=settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="products",
+        verbose_name="Владелец товара",
+        help_text="Пользователь, создавший этот товар"
+    )
 
     def __str__(self):
         """Метод определяет строковое представление объекта. Полезно для отображения объектов в админке/консоли."""
