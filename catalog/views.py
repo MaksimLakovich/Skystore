@@ -68,6 +68,16 @@ class CatalogUpdateView(LoginRequiredMixin, UpdateView):
     form_class = ProductForm
     template_name = "catalog/add_your_product.html"
 
+    def dispatch(self, request, *args, **kwargs):
+        """Метод выполняет проверку прав пользователя на редактирование продукта (владелец продукта), заранее до
+        выполнения любого запроса (GET, POST и т.д.)."""
+        product = get_object_or_404(Product, pk=self.kwargs["pk"])
+        if not request.user == product.owner:
+            return HttpResponseForbidden(
+                f"У вас нет прав для редактирования продукта. Обратитесь к владельцу: {product.owner}"
+            )
+        return super().dispatch(request, *args, **kwargs)
+
     def get_success_url(self):
         """Перенаправление на страницу с деталями продукта после успешного редактирования."""
         return reverse("catalog:product_detail_page", kwargs={"pk": self.object.pk})
@@ -82,6 +92,16 @@ class CatalogDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy("catalog:home_page")
 
     object: Product  # Добавляю явную аннотацию чтоб не ругался MYPY
+
+    def dispatch(self, request, *args, **kwargs):
+        """Метод выполняет проверку прав пользователя на удаление продукта (владелец или модератор),
+        заранее до выполнения любого запроса (GET, POST и т.д.)."""
+        product = get_object_or_404(Product, pk=self.kwargs["pk"])
+        if request.user.has_perm("catalog.delete_product") or request.user == product.owner:
+            return super().dispatch(request, *args, **kwargs)
+        return HttpResponseForbidden(
+            f"У вас нет прав для удаления продукта. Обратитесь к владельцу ({product.owner}) или модераторам магазина."
+        )
 
     def form_valid(self, form):
         """Отправка пользователю уведомления о том, что продукт был удален."""
