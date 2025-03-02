@@ -11,7 +11,7 @@ from catalog.models import ContactsData, Feedback, Product
 
 
 class CatalogListView(ListView):
-    """Представление для отображения домашней страницы (home.html) с пагинацией.
+    """Представление для отображения домашней страницы (home.html) с опубликованными продуктами и пагинацией.
     Для отладки главной/домашней страницы представление выводит в консоль последние 5 созданных продуктов."""
 
     model = Product
@@ -20,13 +20,14 @@ class CatalogListView(ListView):
     paginate_by = 6
 
     def get_queryset(self):
-        """Выборка последних 5 продуктов и вывод в консоль. Символ '-' перед 'created_at' устанавливает порядок от
-        новых к старым. Если не использовать символ '-' перед 'created_at', то порядок будет наоборот."""
-        queryset = Product.objects.order_by("-created_at")
+        """1) Выбираем только опубликованные продукты и сортируем их от новых к старым.
+        2) Для отладки выводим в консоль последние 5 добавленных товаров. Символ '-' перед 'created_at' устанавливает
+        порядок от новых к старым. Если не использовать символ '-' перед 'created_at', то порядок будет наоборот."""
+        queryset = Product.objects.filter(is_published=True).order_by("-created_at")
         latest_products = queryset[:5]
         for product in latest_products:
             print(f"Название: {product.product_name}, Дата создания: {product.created_at}")
-        return super().get_queryset()
+        return queryset  # Возвращает только опубликованные продукты
 
 
 class CatalogDetailView(LoginRequiredMixin, DetailView):
@@ -162,4 +163,19 @@ class CatalogPublicationView(PermissionRequiredMixin, View):
         # теперь и публиковать и отменять публикацию можно одним контроллером CatalogPublicationView, а не отдельными.
         product.is_published = not product.is_published
         product.save()
-        return redirect("catalog:product_detail_page", pk=pk)
+        return redirect("catalog:unpublished_products_page")
+
+
+class CatalogUnpublishedListView(PermissionRequiredMixin, ListView):
+    """Представление для страницы с неопубликованными продуктами (unpublished_products.html) с пагинацией."""
+
+    model = Product
+    template_name = "catalog/unpublished_products.html"
+    context_object_name = "products"
+    paginate_by = 6
+
+    permission_required = "catalog.can_change_product_publication"  # Ограничиваю доступ, чтоб только Модератор мог
+
+    def get_queryset(self):
+        """Выбираем только неопубликованные продукты и сортируем их от новых к старым"""
+        return Product.objects.filter(is_published=False).order_by("-created_at")

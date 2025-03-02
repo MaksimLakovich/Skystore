@@ -73,6 +73,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # Добавляю контекстный процессор 'context_processors.py' который подсчитывает текущее количество
+                # неопубликованных продуктов, чтоб значение 'unpublished_count' было доступно в каждом шаблоне (странице):
+                "catalog.context_processors.unpublished_products_count",
             ],
         },
     },
