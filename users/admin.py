@@ -26,7 +26,7 @@ class UserCustomerAdmin(UserAdmin):
                 )
             },
         ),
-        ("Права доступа", {"fields": ("is_active", "is_staff", "is_superuser")}),
+        ("Права доступа", {"fields": ("is_active", "is_staff", "is_superuser", "groups", "user_permissions")}),
         ("Даты", {"fields": ("last_login", "date_joined")}),
     )
     # Управляет полями при добавлении нового пользователя через админку

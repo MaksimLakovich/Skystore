@@ -1,98 +1,18 @@
-# # ВАРИАНТ 1: импорты для FBV (function-based view):
-# from django.core.paginator import Paginator
-# from django.shortcuts import render, get_object_or_404
-# from django.http import HttpResponse
-#
-# from catalog.forms import ProductForm
-# from catalog.models import ContactsData, Product
-#
-#
-# # ВАРИАНТ 1: использование FBV (function-based view):
-# def home_page(request):
-#     """Контроллер для отображения домашней страницы (home.html) с пагинацией.
-#     Для отладки контроллер главной/домашней страницы выводит в консоль последние 5 созданных продуктов.
-#     :param request: Экземпляр класса HttpRequest, который содержит всю информацию о запросе."""
-#     # Выборка последних 5 продуктов. Символ '-' перед 'created_at' устанавливает порядок от новых к старым.
-#     # Если не использовать символ '-' перед 'created_at', то порядок будет наоборот от старых к новым.
-#     latest_products = Product.objects.order_by("-created_at")[:5]
-#     # Вывод в консоль данных для отладки:
-#     for product in latest_products:
-#         print(f"Название: {product.product_name}, Дата создания: {product.created_at}")
-#     # Создание контекста:
-#     products = Product.objects.all()
-#     # Указываю сколько товаров будет отображаться на одной странице:
-#     items_per_page = 6
-#     # Создаю пагинатор:
-#     paginator = Paginator(products, items_per_page)
-#     # Получаю номер текущей страницы из GET-запроса (по умолчанию страница 1):
-#     page_number = request.GET.get("page", 1)
-#     # Получаю продукты для текущей страницы:
-#     products = paginator.get_page(page_number)
-#     return render(request, "catalog/home.html", {"products": products})
-#
-#
-# def contacts_page(request):
-#     """Контроллер для отображения страницы с контактной информацией (contacts.html).
-#     :param request: Экземпляр класса HttpRequest, который содержит всю информацию о запросе."""
-#     if request.method == "POST":
-#         name = request.POST.get("name")
-#         # Если метод запроса POST, контроллер получает данные из формы (name) и возвращает простой HTTP-ответ.
-#         return HttpResponse(f"Спасибо, {name}! Ваше сообщение успешно отправлено")
-#     # Если метод запроса — GET, контроллер рендерит шаблон contacts.html
-#     # Сразу получаю контактные данные из БД, чтоб потом их использовать при рендере шаблона страницы-html
-#     contacts_data = ContactsData.objects.get(id=1)
-#     return render(request, "catalog/contacts.html", {"contacts_data": contacts_data})
-#
-#
-# def product_detail(request, pk):
-#     """Контроллер для отображения страницы с подробной информацией о продукте (product.html).
-#     :param request: Экземпляр класса HttpRequest, который содержит всю информацию о запросе.
-#     :param pk: ID продукта в БД для получения данных с помощью ORM-запроса."""
-#     # ВАРИАНТ 1: product_data = Product.objects.get(id=pk)
-#     # ВАРИАНТ 2: вместо get() можно использовать get_object_or_404(), эта функция или найдет экземпляр по ID в БД,
-#     # или выведет пользователю ошибку 404, а не системную информацию с ошибкой в коде (это хорошая практика).
-#     product_data = get_object_or_404(Product, pk=pk)
-#     context = {"product": product_data}
-#     return render(request, "catalog/product.html", context)
-#
-#
-# def add_product_page(request):
-#     """Контроллер для отображения страницы с формой, которая позволяет пользователю добавлять новые товары в БД.
-#     :param request: Экземпляр класса HttpRequest, который содержит всю информацию о запросе."""
-#     if request.method == "POST":
-#         # Вызываю форму для добавления пользователем нового товара (форма создана в forms.py)
-#         form = ProductForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             form.save()
-#             return HttpResponse("Данные Вашего продукта успешно добавлены в магазин. Спасибо!")
-#     else:
-#         form = ProductForm()
-#     return render(request, "catalog/add_your_product.html", {"form": form})
-
-
-# ВАРИАНТ 2: импорты для CBV (class-based view):
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.http import HttpResponseForbidden
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import (
-    CreateView,
-    DeleteView,
-    DetailView,
-    FormView,
-    ListView,
-    UpdateView,
-)
+from django.views import View
+from django.views.generic import CreateView, DeleteView, DetailView, FormView, ListView, UpdateView
 
 from catalog.forms import ContactForm, ProductForm
 from catalog.models import ContactsData, Feedback, Product
 
 
-# ВАРИАНТ 2: использование CBV (class-based view):
 class CatalogListView(ListView):
-    """Представление для отображения домашней страницы (home.html) с пагинацией.
-    Для отладки главной/домашней страницы представление выводит в консоль последние 5 созданных продуктов.
-    """
+    """Представление для отображения домашней страницы (home.html) с опубликованными продуктами и пагинацией.
+    Для отладки главной/домашней страницы представление выводит в консоль последние 5 созданных продуктов."""
 
     model = Product
     template_name = "catalog/home.html"
@@ -100,16 +20,14 @@ class CatalogListView(ListView):
     paginate_by = 6
 
     def get_queryset(self):
-        """Выборка последних 5 продуктов и вывод в консоль. Символ '-' перед 'created_at' устанавливает порядок от
-        новых к старым. Если не использовать символ '-' перед 'created_at', то порядок будет наоборот.
-        """
-        queryset = Product.objects.order_by("-created_at")
+        """1) Выбираем только опубликованные продукты и сортируем их от новых к старым.
+        2) Для отладки выводим в консоль последние 5 добавленных товаров. Символ '-' перед 'created_at' устанавливает
+        порядок от новых к старым. Если не использовать символ '-' перед 'created_at', то порядок будет наоборот."""
+        queryset = Product.objects.filter(is_published=True).order_by("-created_at")
         latest_products = queryset[:5]
         for product in latest_products:
-            print(
-                f"Название: {product.product_name}, Дата создания: {product.created_at}"
-            )
-        return super().get_queryset()
+            print(f"Название: {product.product_name}, Дата создания: {product.created_at}")
+        return queryset  # Возвращает только опубликованные продукты
 
 
 class CatalogDetailView(LoginRequiredMixin, DetailView):
@@ -129,11 +47,19 @@ class CatalogCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy("catalog:home_page")
 
     def form_valid(self, form):
-        """Отправка пользователю уведомления о том, что его продукт успешно добавлен."""
+        """1) Отправка пользователю уведомления о том, что его продукт успешно добавлен.
+        2) Автоматическое заполнение текущим пользователем поля 'owner' при создании нового продукта."""
+        form.instance.owner = self.request.user  # Привязываю текущего пользователя как owner
         # С помощью стандартного механизма Django для уведомлений, отправляю пользователю сообщение
         messages.success(self.request, f"Спасибо! Ваш продукт успешно добавлен.")
-        # Возвращаем стандартное поведение формы
+        # Возвращаю стандартное поведение формы
         return super().form_valid(form)
+
+    def get_form_kwargs(self):
+        """Передаю текущего пользователя в форму."""
+        kwargs = super().get_form_kwargs()
+        kwargs["initial"] = {"owner": self.request.user} # Передаём текущего пользователя, чтоб он сразу отображался
+        return kwargs
 
 
 class CatalogUpdateView(LoginRequiredMixin, UpdateView):
@@ -142,6 +68,16 @@ class CatalogUpdateView(LoginRequiredMixin, UpdateView):
     model = Product
     form_class = ProductForm
     template_name = "catalog/add_your_product.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        """Метод выполняет проверку прав пользователя на редактирование продукта (владелец продукта), заранее до
+        выполнения любого запроса (GET, POST и т.д.)."""
+        product = get_object_or_404(Product, pk=self.kwargs["pk"])
+        if not request.user == product.owner:
+            return HttpResponseForbidden(
+                f"У вас нет прав для редактирования продукта. Обратитесь к владельцу: {product.owner}"
+            )
+        return super().dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
         """Перенаправление на страницу с деталями продукта после успешного редактирования."""
@@ -157,6 +93,16 @@ class CatalogDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy("catalog:home_page")
 
     object: Product  # Добавляю явную аннотацию чтоб не ругался MYPY
+
+    def dispatch(self, request, *args, **kwargs):
+        """Метод выполняет проверку прав пользователя на удаление продукта (владелец или модератор),
+        заранее до выполнения любого запроса (GET, POST и т.д.)."""
+        product = get_object_or_404(Product, pk=self.kwargs["pk"])
+        if request.user.has_perm("catalog.delete_product") or request.user == product.owner:
+            return super().dispatch(request, *args, **kwargs)
+        return HttpResponseForbidden(
+            f"У вас нет прав для удаления продукта. Обратитесь к владельцу ({product.owner}) или модераторам магазина."
+        )
 
     def form_valid(self, form):
         """Отправка пользователю уведомления о том, что продукт был удален."""
@@ -197,8 +143,39 @@ class CatalogContactsView(FormView):
         # Сохраняю данные в модель Feedback (таблица 'catalog_feedback' в БД)
         Feedback.objects.create(name=name, phone=phone, message=message)
         # С помощью стандартного механизма Django для уведомлений, отправляю пользователю сообщение
-        messages.success(
-            self.request, f"Спасибо, {name}! Ваше сообщение успешно отправлено."
-        )
+        messages.success(self.request, f"Спасибо, {name}! Ваше сообщение успешно отправлено.")
         # Возвращаем стандартное поведение формы
         return super().form_valid(form)
+
+
+class CatalogPublicationView(PermissionRequiredMixin, View):
+    """Представление Модератора для управления публикациями продуктов в магазине ('Опубликовать' / 'Отменить')."""
+
+    # Устанавливаю для PermissionRequired, что требуется именно право 'can_change_product_publication':
+    permission_required = "catalog.can_change_product_publication"
+
+    def post(self, request, pk):
+        """Метод обрабатывает POST-запрос на то, чтоб опубликовать или отменить публикацию продукта."""
+        product = get_object_or_404(Product, pk=pk)
+        if not request.user.has_perm("catalog.can_change_product_publication"):
+            return HttpResponseForbidden("У вас нет прав на управление публикациями продуктов.")
+        # Эта строка автоматически меняет статус публикации: если был True → станет False и наоборот. Удобно тем, что
+        # теперь и публиковать и отменять публикацию можно одним контроллером CatalogPublicationView, а не отдельными.
+        product.is_published = not product.is_published
+        product.save()
+        return redirect("catalog:unpublished_products_page")
+
+
+class CatalogUnpublishedListView(PermissionRequiredMixin, ListView):
+    """Представление для страницы с неопубликованными продуктами (unpublished_products.html) с пагинацией."""
+
+    model = Product
+    template_name = "catalog/unpublished_products.html"
+    context_object_name = "products"
+    paginate_by = 6
+
+    permission_required = "catalog.can_change_product_publication"  # Ограничиваю доступ, чтоб только Модератор мог
+
+    def get_queryset(self):
+        """Выбираем только неопубликованные продукты и сортируем их от новых к старым"""
+        return Product.objects.filter(is_published=False).order_by("-created_at")

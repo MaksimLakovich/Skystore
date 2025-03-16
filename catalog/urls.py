@@ -6,20 +6,13 @@ from . import views
 
 app_name = CatalogConfig.name
 
-# # ВАРИАНТ 1: использование FBV (function-based view):
-# urlpatterns = [
-#     path('home/', views.home_page, name='home_page'),
-#     path('contacts/', views.contacts_page, name='contacts_page'),
-#     path('product/<int:pk>/', views.product_detail, name='product_detail'),
-#     path('add', views.add_product_page, name='add_your_product_page'),
-# ]
-
-# ВАРИАНТ 2: использование CBV (class-based view):
 urlpatterns = [
     path('home/', views.CatalogListView.as_view(), name='home_page'),
-    path('product/<int:pk>/', views.CatalogDetailView.as_view(), name='product_detail_page'),
-    path('add_product/', views.CatalogCreateView.as_view(), name='add_your_product_page'),
-    path('update/<int:pk>/', views.CatalogUpdateView.as_view(), name='update_product_page'),
-    path('delete/<int:pk>/', views.CatalogDeleteView.as_view(), name='product_confirm_delete_page'),
+    path('product/<int:pk>/detail/', views.CatalogDetailView.as_view(), name='product_detail_page'),
+    path('product/add_product/', views.CatalogCreateView.as_view(), name='add_your_product_page'),
+    path('product/<int:pk>/update/', views.CatalogUpdateView.as_view(), name='update_product_page'),
+    path('product/<int:pk>/delete/', views.CatalogDeleteView.as_view(), name='product_confirm_delete_page'),
     path('contacts/', views.CatalogContactsView.as_view(), name='contacts_page'),
+    path("product/<int:pk>/publication/", views.CatalogPublicationView.as_view(), name="product_publication"),
+    path("unpublished_products/", views.CatalogUnpublishedListView.as_view(), name="unpublished_products_page"),
 ]

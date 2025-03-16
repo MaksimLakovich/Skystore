@@ -23,18 +23,6 @@ class UserCustomerRegistrationForm(UserCreationForm):
             ),
         }
 
-    def clean_email(self):
-        """Переопределение clean_email() для явной проверки уникальности email.
-        Функция clean_email() нужна, даже если email уже unique=True в модели как у нас потому что unique=True в
-        модели выбрасывает ошибку на уровне БД, но не показывает ее в форме, а clean_email() помогает показать
-        пользователю в форме, что такой email уже занят."""
-        email = self.cleaned_data.get("email")
-        if UserCustomer.objects.filter(email=email).exists():
-            raise ValidationError(
-                "Этот email уже используется. Пожалуйста, выберите другой."
-            )
-        return email
-
     def __init__(self, *args, **kwargs):
         """Добавляю CSS-классы ко всем полям формы. Убираем 'help_text' для всех полей, чтоб это больше не выводилось
         по умолчанию на html-странице."""
@@ -56,13 +44,25 @@ class UserCustomerRegistrationForm(UserCreationForm):
             if field_name in placeholders:
                 field.widget.attrs["placeholder"] = placeholders[field_name]
 
+    def clean_email(self):
+        """Переопределение clean_email() для явной проверки уникальности email.
+        Функция clean_email() нужна, даже если email уже unique=True в модели как у нас потому что unique=True в
+        модели выбрасывает ошибку на уровне БД, но не показывает ее в форме, а clean_email() помогает показать
+        пользователю в форме, что такой email уже занят."""
+        email = self.cleaned_data.get("email")
+        if UserCustomer.objects.filter(email=email).exists():
+            raise ValidationError(
+                "Этот email уже используется. Пожалуйста, выберите другой."
+            )
+        return email
+
 
 class UserCustomerLoginForm(AuthenticationForm):
     """Форма для входа ранее зарегистрированного пользователя на сайт магазина."""
 
     def __init__(self, *args, **kwargs):
-        """Заменяю username на email. Добавляю CSS-классы ко всем полям формы. Убираю 'help_text' для всех полей,
-        чтоб это больше не выводилось по умолчанию на html-странице."""
+        """1) Заменяем username на email. 2) Добавляем CSS-классы ко всем полям формы.
+        3) Убираем 'help_text' для всех полей, чтоб это больше не выводилось по умолчанию на html-странице."""
         super().__init__(*args, **kwargs)
 
         # Django использует "username" как ключ, но у нас логин по email
@@ -105,7 +105,7 @@ class UserProfileEditForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        """Добавляю CSS-классы ко всем полям формы. Убираю 'help_text' для всех полей."""
+        """1) Добавляем CSS-классы ко всем полям формы. 2) Убираем 'help_text' для всех полей."""
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             field.help_text = None
@@ -117,7 +117,7 @@ class UserPasswordChangeForm(PasswordChangeForm):
     """Форма для смены пароля пользователя."""
 
     def __init__(self, *args, **kwargs):
-        """Добавляю CSS-классы и placeholders к полям смены пароля."""
+        """Добавляем CSS-классы и placeholders к полям смены пароля."""
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
             field.widget.attrs["class"] = "form-control"
