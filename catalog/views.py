@@ -1,9 +1,12 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.core.cache import cache
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
+from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.decorators.cache import cache_page
 from django.views.generic import CreateView, DeleteView, DetailView, FormView, ListView, UpdateView
 
 from catalog.forms import ContactForm, ProductForm
@@ -30,6 +33,7 @@ class CatalogListView(ListView):
         return queryset  # Возвращает только опубликованные продукты
 
 
+@method_decorator(cache_page(60 * 15), name="dispatch")  # Декоратор для создания кеша для всей страницы
 class CatalogDetailView(LoginRequiredMixin, DetailView):
     """Представление для отображения страницы с подробной информацией о продукте (product.html)."""
 
@@ -82,6 +86,14 @@ class CatalogUpdateView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         """Перенаправление на страницу с деталями продукта после успешного редактирования."""
         return reverse("catalog:product_detail_page", kwargs={"pk": self.object.pk})
+
+    def form_valid(self, form):
+        """Метод сброса кеша страницы CatalogDetailView по URL при изменении каких-либо параметров продукта."""
+        response = super().form_valid(form)
+        # Формирую URL, который кеширует CatalogDetailView
+        product_url = reverse("catalog:product_detail_page", kwargs={"pk": self.object.pk})
+        cache.delete(product_url)  # Удаляю кеш по URL после обновления продукта
+        return response
 
 
 class CatalogDeleteView(LoginRequiredMixin, DeleteView):
