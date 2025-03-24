@@ -89,11 +89,18 @@ class CatalogUpdateView(LoginRequiredMixin, UpdateView):
         return reverse("catalog:product_detail_page", kwargs={"pk": self.object.pk})
 
     def form_valid(self, form):
-        """Метод сброса кеша страницы CatalogDetailView по URL при изменении каких-либо параметров продукта."""
+        """Метод сброса кеша продукта (CatalogDetailView) и списка продуктов в категории (CatalogCategoryProductsView)
+        после редактирования каких-либо параметров продукта."""
         response = super().form_valid(form)
-        # Формирую URL, который кеширует CatalogDetailView
-        product_url = reverse("catalog:product_detail_page", kwargs={"pk": self.object.pk})
-        cache.delete(product_url)  # Удаляю кеш по URL после обновления продукта
+
+        # Формирую URL и удаляю кеш для конкретного продукта (CatalogDetailView)
+        product_cache_url = reverse("catalog:product_detail_page", kwargs={"pk": self.object.pk})
+        cache.delete(product_cache_url)
+
+        # Формирую URL и удаляю кеш для списка продуктов (CatalogCategoryProductsView) с помощью сервисной функции
+        category_cache_key = f"category_products_{self.object.category.pk}"
+        cache.delete(category_cache_key)
+
         return response
 
 
