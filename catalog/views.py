@@ -10,7 +10,8 @@ from django.views.decorators.cache import cache_page
 from django.views.generic import CreateView, DeleteView, DetailView, FormView, ListView, UpdateView
 
 from catalog.forms import ContactForm, ProductForm
-from catalog.models import ContactsData, Feedback, Product
+from catalog.models import Category, ContactsData, Feedback, Product
+from catalog.services import ProductService
 
 
 class CatalogListView(ListView):
@@ -191,3 +192,28 @@ class CatalogUnpublishedListView(PermissionRequiredMixin, ListView):
     def get_queryset(self):
         """Выбираем только неопубликованные продукты и сортируем их от новых к старым"""
         return Product.objects.filter(is_published=False).order_by("-created_at")
+
+
+class CatalogCategoryProductsView(ListView):
+    """Представление для отображения списка всех опубликованных продуктов в указанной категории (с пагинацией)."""
+
+    model = Product
+    template_name = "catalog/category_products.html"
+    context_object_name = "products"
+    paginate_by = 6
+
+    def get_queryset(self):
+        """Выбираем с помощью сервисной функции все продукты в указанной категории, если категория выбрана."""
+        category_id = self.kwargs.get("category_id")  # Получаю ID категории из URL
+        if category_id:
+            return ProductService.get_products_by_category(category_id)
+        return Product.objects.none()  # Если категория не выбрана, возвращаю пустой QuerySet
+
+    def get_context_data(self, **kwargs):
+        """Добавляем список категорий и текущую категорию в контекст шаблона."""
+        context = super().get_context_data(**kwargs)
+        context["categories"] = Category.objects.all()  # Передаем список всех категорий
+        category_id = self.kwargs.get("category_id")
+        if category_id:
+            context["selected_category"] = Category.objects.get(pk=category_id)
+        return context
