@@ -9,6 +9,7 @@
             <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:home_page' %}">Каталог</a>
             <a class="p-2 btn btn-outline-primary" href="{% url 'blog:blog_page' %}">Блог</a>
             <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:contacts_page' %}">Контакты</a>
+            <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:category_products_page' %}">Категории</a>
             {% if perms.catalog.can_change_product_publication %}
             <a class="p-2 btn btn-outline-secondary position-relative" href="{% url 'catalog:unpublished_products_page' %}">
                 Неопубликованные продукты

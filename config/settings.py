@@ -75,7 +75,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 # Добавляю контекстный процессор 'context_processors.py' который подсчитывает текущее количество
                 # неопубликованных продуктов, чтоб значение 'unpublished_count' было доступно в каждом шаблоне (странице):
-                "catalog.context_processors.unpublished_products_count",
+                'catalog.context_processors.unpublished_products_count',
             ],
         },
     },
@@ -157,6 +157,16 @@ EMAIL_HOST_USER = os.getenv('YANDEX_EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('YANDEX_EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-LOGOUT_REDIRECT_URL = "catalog:home_page"
+LOGOUT_REDIRECT_URL = 'catalog:home_page'
 
-LOGIN_URL = "users:register"
+LOGIN_URL = 'users:register'
+
+REDIS_URL = os.getenv('REDIS_URL')
+CACHE_ENABLED = True
+if CACHE_ENABLED:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+            'LOCATION': REDIS_URL,
+        }
+    }

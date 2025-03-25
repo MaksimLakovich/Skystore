@@ -1,13 +1,17 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.core.cache import cache
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
+from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.decorators.cache import cache_page
 from django.views.generic import CreateView, DeleteView, DetailView, FormView, ListView, UpdateView
 
 from catalog.forms import ContactForm, ProductForm
-from catalog.models import ContactsData, Feedback, Product
+from catalog.models import Category, ContactsData, Feedback, Product
+from catalog.services import ProductService
 
 
 class CatalogListView(ListView):
@@ -30,6 +34,7 @@ class CatalogListView(ListView):
         return queryset  # Возвращает только опубликованные продукты
 
 
+@method_decorator(cache_page(60 * 15), name="dispatch")  # Декоратор для создания кеша для всей страницы
 class CatalogDetailView(LoginRequiredMixin, DetailView):
     """Представление для отображения страницы с подробной информацией о продукте (product.html)."""
 
@@ -82,6 +87,21 @@ class CatalogUpdateView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         """Перенаправление на страницу с деталями продукта после успешного редактирования."""
         return reverse("catalog:product_detail_page", kwargs={"pk": self.object.pk})
+
+    def form_valid(self, form):
+        """Метод сброса кеша продукта (CatalogDetailView) и списка продуктов в категории (CatalogCategoryProductsView)
+        после редактирования каких-либо параметров продукта."""
+        response = super().form_valid(form)
+
+        # Формирую URL и удаляю кеш для конкретного продукта (CatalogDetailView)
+        product_cache_url = reverse("catalog:product_detail_page", kwargs={"pk": self.object.pk})
+        cache.delete(product_cache_url)
+
+        # Формирую URL и удаляю кеш для списка продуктов (CatalogCategoryProductsView) с помощью сервисной функции
+        category_cache_key = f"category_products_{self.object.category.pk}"
+        cache.delete(category_cache_key)
+
+        return response
 
 
 class CatalogDeleteView(LoginRequiredMixin, DeleteView):
@@ -179,3 +199,28 @@ class CatalogUnpublishedListView(PermissionRequiredMixin, ListView):
     def get_queryset(self):
         """Выбираем только неопубликованные продукты и сортируем их от новых к старым"""
         return Product.objects.filter(is_published=False).order_by("-created_at")
+
+
+class CatalogCategoryProductsView(ListView):
+    """Представление для отображения списка всех опубликованных продуктов в указанной категории (с пагинацией)."""
+
+    model = Product
+    template_name = "catalog/category_products.html"
+    context_object_name = "products"
+    paginate_by = 6
+
+    def get_queryset(self):
+        """Выбираем с помощью сервисной функции все продукты в указанной категории, если категория выбрана."""
+        category_id = self.kwargs.get("category_id")  # Получаю ID категории из URL
+        if category_id:
+            return ProductService.get_products_by_category(category_id)
+        return Product.objects.none()  # Если категория не выбрана, возвращаю пустой QuerySet
+
+    def get_context_data(self, **kwargs):
+        """Добавляем список категорий и текущую категорию в контекст шаблона."""
+        context = super().get_context_data(**kwargs)
+        context["categories"] = Category.objects.all()  # Передаем список всех категорий
+        category_id = self.kwargs.get("category_id")
+        if category_id:
+            context["selected_category"] = Category.objects.get(pk=category_id)
+        return context
