@@ -1,0 +1,33 @@
+{% extends 'catalog/base.html' %}
+{% load my_tags %}
+{% block title %}Skystore: {{ article.article_title }}{% endblock %}
+
+{% block content %}
+<!-- Основной блок с информацией о статье -->
+<div class="container">
+    <div class="row align-items-center mb-5">
+        <!-- Название статьи -->
+        <div class="col-md-10 text-center">
+            <h1 class="card-title mb-2 mt-5">{{ article.article_title }}</h1>
+        </div>
+    </div>
+    <!-- Параметры статьи -->
+    <div class="product-parameters mb-5">
+        <p class="mb-4">{{ article.article_contents }}</p>
+        <small class="text-muted-secondary">Дата статьи: {{ article.create_at | date:"d M Y" }}</small>
+        <!-- Иконка глаза и отображение счетчика просмотров-->
+        <p class="text-muted mb-5 mt-3 d-flex" style="opacity: 0.4;">
+            <span class="ms-3 d-flex align-items-center">
+                <i class="fas fa-eye me-1"></i>
+                <span>{{ article.views_counter }}</span>
+            </span>
+        </p>
+    </div>
+    <!-- Кнопки -->
+    <div class="text-center">
+        <a href="{% url 'blog:blog_page' %}" class="btn btn-lg btn-primary me-3">Назад</a>
+        <a href="{% url 'blog:update_your_article_page' article.pk %}" class="btn btn-lg btn-outline-primary">Редактировать</a>
+        <a href="{% url 'blog:article_confirm_delete_page' article.pk %}" class="btn btn-lg btn-outline-danger">Удалить</a>
+    </div>
+</div>
+{% endblock %}
