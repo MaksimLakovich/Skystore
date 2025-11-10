@@ -420,7 +420,7 @@
 # <a id="title12">12. Установка проекта</a>
 1. Клонируйте репозиторий:
 ```
-git clone https://github.com/MaksimLakovich/Homework-4-python-DJANGO-PROJECT.git
+git clone https://github.com/MaksimLakovich/Skystore.git
 ```
 2. Установите зависимости:
 ```
